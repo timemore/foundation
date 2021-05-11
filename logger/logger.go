@@ -1,0 +1,90 @@
+package logger
+
+import (
+	"io"
+	"net/http"
+	"os"
+	"path"
+	"strings"
+	"time"
+
+	"github.com/kelseyhightower/envconfig"
+	"github.com/rs/zerolog"
+	"github.com/tomasen/realip"
+	"gopkg.in/natefinch/lumberjack.v2"
+)
+
+type (
+	Logger = zerolog.Logger
+)
+
+type PkgLogger struct {
+	Logger
+}
+
+const EnvPrefixDefault = "LOG_"
+
+func newRollingFile(config Config) io.Writer {
+	if err := os.MkdirAll(config.Directory, 0744); err != nil {
+		return nil
+	}
+	logFilename := path.Join(config.Directory, config.Filename)
+
+	return &lumberjack.Logger{
+		Filename:   logFilename,
+		MaxBackups: config.MaxBackups, // files
+		MaxSize:    config.MaxSize,    // megabytes
+		MaxAge:     config.MaxAge,     // days
+	}
+}
+
+func newLogger() Logger {
+	if logPretty := os.Getenv(EnvPrefixDefault + "PRETTY"); logPretty == "true" {
+		return zerolog.New(zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339})
+	}
+
+	return zerolog.New(os.Stderr)
+}
+
+func NewPkgLogger() PkgLogger {
+	logger := newLogger()
+	logLevelStr := os.Getenv(EnvPrefixDefault + "LEVEL")
+	if logLevelStr != "" {
+		logLevel, err := zerolog.ParseLevel(logLevelStr)
+		if err == nil {
+			logger = logger.Level(logLevel)
+		}
+	}
+	var cfg Config
+	err := envconfig.Process(strings.TrimRight(EnvPrefixDefault, "_"), &cfg)
+	if err == nil {
+		consoleWriter := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
+		mw := zerolog.MultiLevelWriter(consoleWriter, newRollingFile(cfg))
+		logger = logger.Output(mw)
+	}
+	logCtx := logger.With().Timestamp().CallerWithSkipFrameCount(2)
+	return PkgLogger{logCtx.Logger()}
+}
+
+func (logger PkgLogger) WithRequest(req *http.Request) *Logger {
+	if req == nil {
+		return &logger.Logger
+	}
+
+	var urlStr string
+	if req.URL != nil {
+		urlStr = req.URL.String()
+	}
+	remoteAddr := realip.FromRequest(req)
+	if remoteAddr == "" {
+		remoteAddr = req.RemoteAddr
+	}
+	l := logger.With().
+		Str("method", req.Method).
+		Str("url", urlStr).
+		Str("remote_ip", remoteAddr).
+		Str("user_agent", req.UserAgent()).
+		Logger()
+
+	return &l
+}
