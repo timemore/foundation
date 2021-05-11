@@ -10,7 +10,7 @@ import (
 )
 
 type Config struct {
-	DirectoryPath string `split_words:"true"`
+	DirectoryPath string `env:"FOLDER_PATH"`
 }
 
 const ServiceName = "local"

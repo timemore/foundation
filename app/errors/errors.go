@@ -5,6 +5,8 @@ import (
 )
 
 type Error interface {
+	// TODO: details: which part of the application. Configuration?
+
 	error
 	ApplicationError() Error
 }
@@ -21,6 +23,8 @@ func (e *applicationBase) Error() string           { return "application error" 
 func (e *applicationBase) ApplicationError() Error { return e }
 
 type Configuration interface {
+	// TODO: details: which configuration fields, etc.
+
 	Error
 	ConfigurationError() Configuration
 }

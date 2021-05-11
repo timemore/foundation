@@ -13,10 +13,10 @@ import (
 )
 
 type Config struct {
-	Region          string `split_words:"true"`
-	BucketName      string `split_words:"true"`
-	AccessKeyID     string `split_words:"true"`
-	SecretAccessKey string `split_words:"true"`
+	Region          string `env:"REGION,required"`
+	BucketName      string `env:"BUCKET_NAME,required"`
+	AccessKeyID     string `env:"ACCESS_KEY_ID"`
+	SecretAccessKey string `env:"SECRET_ACCESS_KEY"`
 }
 
 const ServiceName = "s3"
@@ -46,7 +46,7 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 		return nil, errors.ArgMsg("config", "type invalid")
 	}
 	if conf == nil || conf.Region == "" || conf.BucketName == "" {
-		return nil, errors.ArgMsg("config", "field invalid")
+		return nil, errors.ArgMsg("config", "fields invalid")
 	}
 
 	var creds *credentials.Credentials

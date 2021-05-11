@@ -12,12 +12,12 @@ import (
 )
 
 type Config struct {
-	Region          string `split_words:"true"`
-	BucketName      string `split_words:"true"`
-	AccessKeyID     string `split_words:"true"`
-	SecretAccessKey string `split_words:"true"`
-	Endpoint        string `split_words:"true"`
-	UseSSL          bool   `split_words:"true"`
+	Region          string `env:"REGION"`
+	BucketName      string `env:"BUCKET_NAME"`
+	AccessKeyID     string `env:"ACCESS_KEY_ID,required"`
+	SecretAccessKey string `env:"SECRET_ACCESS_KEY,required"`
+	Endpoint        string `env:"ENDPOINT,required"`
+	UseSSL          bool   `env:"USE_SSL"`
 }
 
 const ServiceName = "minio"

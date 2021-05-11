@@ -18,12 +18,12 @@ func RunServers(servers []ServiceServer) {
 		return
 	}
 
-	// 	used to determine if all servers have stopped
-	var serverStopWaiter sync.WaitGroup
+	// Used to determine if all servers have stopped.
+	var serversStopWaiter sync.WaitGroup
 
-	// 	Start the servers
+	// Start the servers
 	for _, srv := range servers {
-		serverStopWaiter.Add(1)
+		serversStopWaiter.Add(1)
 		go func(innerSrv ServiceServer) {
 			srvName := innerSrv.ServerName()
 			log.Info().Msgf("Starting %s...", srvName)
@@ -33,18 +33,19 @@ func RunServers(servers []ServiceServer) {
 			} else {
 				log.Info().Msgf("%s stopped", srvName)
 			}
-			serverStopWaiter.Done()
+			serversStopWaiter.Done()
 		}(srv)
 	}
 
-	// We set up the signal handler (interrupt and terminate)
+	// We set up the signal handler (interrupt and terminate).
 	// We are using the signal to gracefully and forcefully stop the server.
 	shutdownSignal := make(chan os.Signal)
-	// 	Listen to interrupt and terminal signals
+	// Listen to interrupt and terminal signals
 	signal.Notify(shutdownSignal, syscall.SIGINT, syscall.SIGTERM)
 
-	// 	Wait for the shutdown signal
+	// Wait for the shutdown signal
 	<-shutdownSignal
+
 	log.Info().Msg("Shutting down servers...")
 
 	// Start another routine to catch another signal so the shutdown
@@ -55,7 +56,7 @@ func RunServers(servers []ServiceServer) {
 		os.Exit(0)
 	}()
 
-	// 	Gracefully shutdown the servers
+	// Gracefully shutdown the servers
 	shutdownCtx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
@@ -70,8 +71,8 @@ func RunServers(servers []ServiceServer) {
 		}(srv)
 	}
 
-	// Wait for all servers to stop
-	serverStopWaiter.Wait()
+	// Wait for all servers to stop.
+	serversStopWaiter.Wait()
 
 	log.Info().Msg("Done.")
 }

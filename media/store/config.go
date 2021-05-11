@@ -1,21 +1,22 @@
 package store
 
 import (
-	"github.com/kelseyhightower/envconfig"
+	"github.com/rez-go/stev"
 )
 
 type Config struct {
-	NameGenerationKey string `split_words:"true" envconfig:"FILENAME_GENERATION_KEY"`
-	StoreService      string `split_words:"true" envconfig:"STORE_SERVICE"`
+	NameGenerationKey string `env:"FILENAME_GENERATION_KEY"`
+	StoreService      string `env:"STORE_SERVICE"`
 
-	Modules map[string]interface{} `split_words:"true"`
+	Modules map[string]interface{} `env:",map,squash"`
 
-	ImagesBaseURL string `envconfig:"IMAGES_BASE_URL" split_words:"true"`
+	ImagesBaseURL string `env:"IMAGES_BASE_URL"`
 }
 
+// ParseConfigFromEnv populate the configuration by looking up the environment variables.
 func ParseConfigFromEnv(prefix string) (*Config, error) {
 	cfg := Config{}
-	err := envconfig.Process(prefix, &cfg)
+	err := stev.LoadEnv(prefix, &cfg)
 	if err != nil {
 		return nil, err
 	}

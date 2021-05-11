@@ -3,6 +3,7 @@ package media
 import "github.com/gabriel-vasile/mimetype"
 
 func DetectType(buf []byte) string {
+	// Detect always returns valid MIME.
 	return mimetype.Detect(buf).String()
 }
 

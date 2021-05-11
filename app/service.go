@@ -4,8 +4,9 @@ import (
 	"context"
 )
 
+// ServiceServer abstracts all service servers
 type ServiceServer interface {
-	// ServerName returns the name of the server. This is not to bu unique
+	// ServerName returns the name of the server. This is not to be unique
 	ServerName() string
 
 	// Serve starts the server.
@@ -19,6 +20,6 @@ type ServiceServer interface {
 	// IsAcceptingClients returns true if the service is ready to serve clients.
 	IsAcceptingClients() bool
 
-	// IsHealthy returns true if the service is considerably healthy
+	// IsHealthy returns true if the service is considerably healthy.
 	IsHealthy() bool
 }

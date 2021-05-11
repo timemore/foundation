@@ -6,15 +6,15 @@ require (
 	github.com/aws/aws-sdk-go v1.38.37
 	github.com/emicklei/go-restful/v3 v3.5.1
 	github.com/gabriel-vasile/mimetype v1.3.0
-	github.com/google/uuid v1.2.0 // indirect
+	github.com/google/uuid v1.2.0
 	github.com/gopherjs/gopherjs v0.0.0-20210503212227-fb464eba2686 // indirect
 	github.com/json-iterator/go v1.1.11 // indirect
-	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/klauspost/cpuid/v2 v2.0.6 // indirect
 	github.com/kr/text v0.2.0 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v7 v7.0.10
 	github.com/minio/sha256-simd v1.0.0 // indirect
+	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
 	github.com/rs/xid v1.3.0 // indirect
 	github.com/rs/zerolog v1.21.0
 	github.com/smartystreets/assertions v1.2.0 // indirect

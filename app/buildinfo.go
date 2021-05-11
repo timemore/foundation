@@ -6,11 +6,14 @@ type BuildInfo struct {
 }
 
 var (
-	buildRevisionID = "unknown"
-	buildTimestamp  = "unknown"
+	buildRevisionID string = "unknown"
+	buildTimestamp  string = "unknown"
 )
 
-func SetBuildInfo(revisionID string, timestamp string) {
+func SetBuildInfo(
+	revisionID string,
+	timestamp string,
+) {
 	buildRevisionID = revisionID
 	buildTimestamp = timestamp
 }

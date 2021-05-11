@@ -5,10 +5,9 @@ import (
 	"net/http"
 	"os"
 	"path"
-	"strings"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
+	"github.com/rez-go/stev"
 	"github.com/rs/zerolog"
 	"github.com/tomasen/realip"
 	"gopkg.in/natefinch/lumberjack.v2"
@@ -56,7 +55,7 @@ func NewPkgLogger() PkgLogger {
 		}
 	}
 	var cfg Config
-	err := envconfig.Process(strings.TrimRight(EnvPrefixDefault, "_"), &cfg)
+	err := stev.LoadEnv(EnvPrefixDefault, &cfg)
 	if err == nil {
 		consoleWriter := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
 		mw := zerolog.MultiLevelWriter(consoleWriter, newRollingFile(cfg))

@@ -4,9 +4,15 @@ import (
 	"sync"
 )
 
+// Module contains attributes which describe a storage module.
 type Module struct {
+	// ServiceConfigSkeleton returns an instance of config used to initialize
+	// the service. This skeleton contains a config structure.
 	ServiceConfigSkeleton func() ServiceConfig
-	NewService            func(config ServiceConfig) (Service, error)
+
+	// NewService create a storage service backend connection. This is
+	// usually initialize the client of the object storage.
+	NewService func(config ServiceConfig) (Service, error)
 }
 
 var (
@@ -22,10 +28,14 @@ func ModuleNames() []string {
 	for name := range modules {
 		names = append(names, name)
 	}
+
 	return names
 }
 
-func NewServiceClient(serviceName string, config interface{}) (Service, error) {
+func NewServiceClient(
+	serviceName string,
+	config interface{},
+) (Service, error) {
 	if serviceName == "" {
 		return nil, nil
 	}
@@ -38,13 +48,17 @@ func NewServiceClient(serviceName string, config interface{}) (Service, error) {
 	return module.NewService(config)
 }
 
-func RegisterModule(serviceName string, module Module) {
+func RegisterModule(
+	serviceName string,
+	module Module,
+) {
 	modulesMu.Lock()
 	defer modulesMu.Unlock()
 
 	if _, dup := modules[serviceName]; dup {
 		panic("called twice for service " + serviceName)
 	}
+
 	modules[serviceName] = module
 }
 

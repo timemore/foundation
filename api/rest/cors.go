@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/emicklei/go-restful/v3"
-	"github.com/kelseyhightower/envconfig"
+	"github.com/rez-go/stev"
 	"github.com/timemore/foundation/errors"
 )
 
@@ -13,14 +13,14 @@ import (
 // AllowedMethods define which http methods is allowed
 // AllowedDomains define which domain is allowd or set to (*)
 type CORSFilterConfig struct {
-	AllowedHeaders *string
-	AllowedMethods string
-	AllowedDomains string
+	AllowedHeaders *string `env:"ALLOWED_HEADERS"`
+	AllowedMethods string  `env:"ALLOWED_METHODS"`
+	AllowedDomains string  `env:"ALLOWED_DOMAINS"`
 }
 
 func SetupCORSFilterByEnv(restContainer *restful.Container, envPrefix string) error {
 	var cfg CORSFilterConfig
-	err := envconfig.Process(envPrefix, &cfg)
+	err := stev.LoadEnv(envPrefix, &cfg)
 	if err != nil {
 		return errors.Wrap("config loading from environment variables", err)
 	}

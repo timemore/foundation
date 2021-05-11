@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/kelseyhightower/envconfig"
+	"github.com/rez-go/stev"
 	"github.com/timemore/foundation/errors"
 )
 
@@ -24,14 +24,14 @@ type Info struct {
 	// Name of the app
 	Name string `split_words:"true"`
 	// URL Canonical URL of the app
-	URL                     string `split_words:"true"`
-	TermsOfServiceURL       string `split_words:"true"`
-	PrivacyPolicyURL        string `split_words:"true"`
-	Email                   string `split_words:"true"`
-	NotificationEmailSender string `split_words:"true"`
-	TeamName                string `split_words:"true"`
-	Env                     string `split_words:"true"`
-	TZLocation              string `split_words:"true"`
+	URL                     string
+	TermsOfServiceURL       string
+	PrivacyPolicyURL        string
+	Email                   string
+	NotificationEmailSender string
+	TeamName                string
+	Env                     string
+	TZLocation              string
 	location                *time.Location
 }
 
@@ -98,7 +98,7 @@ var (
 
 func InitByEnvDefault() (App, error) {
 	info := DefaultInfo()
-	err := envconfig.Process(EnvPrefixDefault, &info)
+	err := stev.LoadEnv(EnvPrefixDefault, &info)
 	if err != nil {
 		return nil, errors.Wrap("info loading from environment variables", err)
 	}
@@ -114,6 +114,7 @@ func Init(info *Info) (App, error) {
 		} else {
 			appInfo = DefaultInfo()
 		}
+
 		var unameStr string
 		unameStr, err = unameString()
 		if err != nil {
