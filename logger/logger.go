@@ -24,10 +24,14 @@ type PkgLogger struct {
 const EnvPrefixDefault = "LOG_"
 
 func newRollingFile(config Config) io.Writer {
+	filena := config.Filename
+	if filena == "" {
+		filena = "service.log"
+	}
 	if err := os.MkdirAll(config.Directory, 0744); err != nil {
 		return nil
 	}
-	logFilename := path.Join(config.Directory, config.Filename)
+	logFilename := path.Join(config.Directory, filena)
 
 	return &lumberjack.Logger{
 		Filename:   logFilename,
@@ -54,7 +58,7 @@ func NewPkgLogger() PkgLogger {
 			logger = logger.Level(logLevel)
 		}
 	}
-	var cfg Config
+	cfg := configSkeletonPtr()
 	err := stev.LoadEnv(EnvPrefixDefault, &cfg)
 	if err == nil {
 		consoleWriter := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
