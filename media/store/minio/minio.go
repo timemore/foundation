@@ -2,7 +2,6 @@ package minio
 
 import (
 	"context"
-	"fmt"
 	"io"
 
 	"github.com/minio/minio-go/v7"
@@ -23,7 +22,6 @@ type Config struct {
 const ServiceName = "minio"
 
 func init() {
-	fmt.Printf("init service minio")
 	mediastore.RegisterModule(
 		ServiceName,
 		mediastore.Module{
@@ -48,7 +46,7 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 		return nil, errors.ArgMsg("config", "type invalid")
 	}
 	if conf.Endpoint == "" {
-		return nil, errors.ArgMsg("config.EndPoint", "empty")
+		return nil, errors.ArgMsg("config.Endpoint", "empty")
 	}
 	if conf.AccessKeyID == "" || conf.SecretAccessKey == "" {
 		return nil, errors.ArgMsg("config", "access key required")

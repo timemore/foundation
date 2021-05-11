@@ -1,7 +1,6 @@
 package s3
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -22,7 +21,6 @@ type Config struct {
 const ServiceName = "s3"
 
 func init() {
-	fmt.Printf("init service s3")
 	mediastore.RegisterModule(
 		ServiceName,
 		mediastore.Module{
