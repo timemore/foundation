@@ -1,6 +1,10 @@
 package media
 
-import "github.com/gabriel-vasile/mimetype"
+import (
+	"strings"
+
+	"github.com/gabriel-vasile/mimetype"
+)
 
 func DetectType(buf []byte) string {
 	// Detect always returns valid MIME.
@@ -23,4 +27,22 @@ var mediaTypeRegistry = map[MediaType]MediaTypeInfo{
 		mediaType:     MediaType_IMAGE,
 		directoryName: "images",
 	},
+}
+
+func GetMediaTypeInfoByTypeName(mediaTypeName string) MediaTypeInfo {
+	if mediaTypeName == "" {
+		return nil
+	}
+
+	mediaTypeName = strings.ToUpper(mediaTypeName)
+	if v, ok := MediaType_Value[mediaTypeName]; ok {
+		mediaType := MediaType(v)
+		return GetMediaTypeInfo(mediaType)
+	}
+
+	return nil
+}
+
+func GetMediaTypeInfo(mediaType MediaType) MediaTypeInfo {
+	return mediaTypeRegistry[mediaType]
 }
