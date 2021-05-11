@@ -2,12 +2,13 @@ package minio
 
 import (
 	"context"
+	"fmt"
 	"io"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
-	"github.com/timemore/bootstrap/errors"
-	mediastore "github.com/timemore/bootstrap/media/store"
+	"github.com/timemore/foundation/errors"
+	mediastore "github.com/timemore/foundation/media/store"
 )
 
 type Config struct {
@@ -22,6 +23,7 @@ type Config struct {
 const ServiceName = "minio"
 
 func init() {
+	fmt.Printf("init service minio")
 	mediastore.RegisterModule(
 		ServiceName,
 		mediastore.Module{

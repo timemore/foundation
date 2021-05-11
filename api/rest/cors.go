@@ -5,7 +5,7 @@ import (
 
 	"github.com/emicklei/go-restful/v3"
 	"github.com/kelseyhightower/envconfig"
-	"github.com/timemore/bootstrap/errors"
+	"github.com/timemore/foundation/errors"
 )
 
 // CORSFilterConfig get cors filter from env

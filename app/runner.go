@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/timemore/bootstrap/logger"
+	"github.com/timemore/foundation/logger"
 )
 
 var log = logger.NewPkgLogger()

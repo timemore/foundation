@@ -1,14 +1,15 @@
 package s3
 
 import (
+	"fmt"
 	"io"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/timemore/bootstrap/errors"
-	mediastore "github.com/timemore/bootstrap/media/store"
+	"github.com/timemore/foundation/errors"
+	mediastore "github.com/timemore/foundation/media/store"
 )
 
 type Config struct {
@@ -21,6 +22,7 @@ type Config struct {
 const ServiceName = "s3"
 
 func init() {
+	fmt.Printf("init service s3")
 	mediastore.RegisterModule(
 		ServiceName,
 		mediastore.Module{

@@ -6,8 +6,8 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/timemore/bootstrap/errors"
-	"github.com/timemore/bootstrap/media"
+	"github.com/timemore/foundation/errors"
+	"github.com/timemore/foundation/media"
 	"golang.org/x/crypto/blake2b"
 )
 

@@ -5,8 +5,8 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/timemore/bootstrap/errors"
-	mediastore "github.com/timemore/bootstrap/media/store"
+	"github.com/timemore/foundation/errors"
+	mediastore "github.com/timemore/foundation/media/store"
 )
 
 type Config struct {

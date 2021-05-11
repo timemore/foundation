@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
-	"github.com/timemore/bootstrap/errors"
+	"github.com/timemore/foundation/errors"
 )
 
 const EnvPrefixDefault = "APP_"

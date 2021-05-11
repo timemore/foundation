@@ -1,7 +1,7 @@
 package access
 
 import (
-	"github.com/timemore/bootstrap/errors"
+	"github.com/timemore/foundation/errors"
 )
 
 // Error is an abstract error type for all API access-related errors.

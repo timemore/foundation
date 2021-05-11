@@ -1,7 +1,7 @@
 package errors
 
 import (
-	"github.com/timemore/bootstrap/errors"
+	"github.com/timemore/foundation/errors"
 )
 
 type Error interface {
