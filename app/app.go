@@ -124,10 +124,10 @@ func Init(info *Info) (App, error) {
 		if err != nil {
 			location = time.Local
 		}
-		if info.Env == "" {
-			info.Env = "dev"
+		if appInfo.Env == "" {
+			appInfo.Env = "dev"
 		}
-		info.location = location
+		appInfo.location = location
 		defApp = &Base{appInfo: appInfo, instanceID: unameStr}
 	})
 
