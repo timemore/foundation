@@ -22,7 +22,7 @@ const (
 
 type Info struct {
 	// Name of the app
-	Name string `split_words:"true"`
+	Name string
 	// URL Canonical URL of the app
 	URL                     string
 	TermsOfServiceURL       string
