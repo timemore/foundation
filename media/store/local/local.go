@@ -46,7 +46,7 @@ type Service struct {
 	directoryPath string
 }
 
-func (s *Service) PutObject(objectKey string, contentSource io.Reader) (publicURL string, err error) {
+func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
 	targetName := filepath.Join(s.directoryPath, objectKey)
 	targetFile, err := os.Create(targetName)
 	if err != nil {
@@ -62,9 +62,17 @@ func (s *Service) PutObject(objectKey string, contentSource io.Reader) (publicUR
 	}
 
 	// TODO: final URL! ask the HTTP server to provide this.
-	return objectKey, nil
+	return UploadOutput{
+		Directory: s.directoryPath,
+		Key:       objectKey,
+	}, nil
 }
 
 var _ mediastore.Service = &Service{}
 
 func ConfigSkeleton() Config { return Config{} }
+
+type UploadOutput struct {
+	Directory string
+	Key       string
+}

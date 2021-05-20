@@ -90,15 +90,15 @@ type Service struct {
 	minioClient *minio.Client
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (publicURL string, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
 	ctx := context.Background()
 	bucketName := s.bucketName
-	uploadInfo, err := s.minioClient.PutObject(ctx, bucketName, targetKey, contentSource, -1, minio.PutObjectOptions{})
+	info, err := s.minioClient.PutObject(ctx, bucketName, targetKey, contentSource, -1, minio.PutObjectOptions{})
 	if err != nil {
-		return "", errors.Wrap("upload", err)
+		return nil, errors.Wrap("upload", err)
 	}
 
-	return uploadInfo.Key, nil
+	return info, nil
 }
 
 var _ mediastore.Service = &Service{}

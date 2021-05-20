@@ -79,7 +79,7 @@ type Service struct {
 	uploader   *s3manager.Uploader
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (publicURL string, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
 	result, err := s.uploader.Upload(&s3manager.UploadInput{
 		Body:   contentSource,
 		Bucket: aws.String(s.bucketName),
@@ -88,7 +88,7 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (publicUR
 	if err != nil {
 		return "", errors.Wrap("upload", err)
 	}
-	return result.Location, nil
+	return result, nil
 }
 
 var _ mediastore.Service = &Service{}

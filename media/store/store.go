@@ -4,7 +4,6 @@ import (
 	"encoding/hex"
 	"io"
 	"strconv"
-	"strings"
 
 	"github.com/timemore/foundation/errors"
 	"github.com/timemore/foundation/media"
@@ -39,22 +38,23 @@ func New(config Config) (*Store, error) {
 	}, nil
 }
 
-func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, mediaType media.MediaType) (publicURL string, err error) {
-	objectURL, err := mediaStore.serviceClient.PutObject(mediaName, contentSource)
+func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, mediaType media.MediaType) (uploadInfo interface{}, err error) {
+	uploadInfo, err = mediaStore.serviceClient.PutObject(mediaName, contentSource)
 	if err != nil {
 		return "", errors.Wrap("putting object", err)
 	}
 
-	if mediaType == media.MediaType_IMAGE {
-		if mediaStore.config.ImagesBaseURL != "" {
-			publicURL = strings.TrimRight(mediaStore.config.ImagesBaseURL, "/") + "/" + mediaName
-		} else {
-			publicURL = objectURL
-		}
-	} else {
-		publicURL = objectURL
-	}
-	return publicURL, nil
+	return uploadInfo, nil
+	// if mediaType == media.MediaType_IMAGE {
+	// 	if mediaStore.config.ImagesBaseURL != "" {
+	// 		publicURL = strings.TrimRight(mediaStore.config.ImagesBaseURL, "/") + "/" + mediaName
+	// 	} else {
+	// 		publicURL = objectURL
+	// 	}
+	// } else {
+	// 	publicURL = objectURL
+	// }
+	// return publicURL, nil
 }
 
 const nameGenHashLength = 16
