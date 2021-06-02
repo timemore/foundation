@@ -2,10 +2,12 @@ package s3
 
 import (
 	"io"
+	"time"
 
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials"
 	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/timemore/foundation/errors"
 	mediastore "github.com/timemore/foundation/media/store"
@@ -71,12 +73,14 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 		uploader: s3manager.NewUploader(sess, func(u *s3manager.Uploader) {
 			u.PartSize = uploadPartSize
 		}),
+		svc: s3.New(sess),
 	}, nil
 }
 
 type Service struct {
 	bucketName string
 	uploader   *s3manager.Uploader
+	svc        *s3.S3
 }
 
 func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
@@ -89,6 +93,20 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 		return "", errors.Wrap("upload", err)
 	}
 	return result, nil
+}
+
+func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error) {
+	req, _ := s.svc.GetObjectRequest(&s3.GetObjectInput{
+		Bucket: aws.String(s.bucketName),
+		Key:    aws.String(sourceKey),
+	})
+	targetURL, err = req.Presign(15 * time.Minute)
+
+	if err != nil {
+		return "", err
+	}
+
+	return targetURL, nil
 }
 
 var _ mediastore.Service = &Service{}

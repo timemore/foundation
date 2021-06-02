@@ -45,16 +45,10 @@ func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, media
 	}
 
 	return uploadInfo, nil
-	// if mediaType == media.MediaType_IMAGE {
-	// 	if mediaStore.config.ImagesBaseURL != "" {
-	// 		publicURL = strings.TrimRight(mediaStore.config.ImagesBaseURL, "/") + "/" + mediaName
-	// 	} else {
-	// 		publicURL = objectURL
-	// 	}
-	// } else {
-	// 	publicURL = objectURL
-	// }
-	// return publicURL, nil
+}
+
+func (mediaStore *Store) GetPublicURL(sourceKey string) (publicURL string, err error) {
+	return mediaStore.serviceClient.GetPublicObject(sourceKey)
 }
 
 const nameGenHashLength = 16

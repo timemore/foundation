@@ -1,12 +1,17 @@
 package minio
 
 import (
+	"bytes"
 	"context"
 	"io"
+	"net/url"
+	"strconv"
+	"time"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
 	"github.com/timemore/foundation/errors"
+	"github.com/timemore/foundation/media"
 	mediastore "github.com/timemore/foundation/media/store"
 )
 
@@ -99,6 +104,28 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 	}
 
 	return info, nil
+}
+
+func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error) {
+	ctx := context.Background()
+	object, err := s.minioClient.GetObject(ctx, s.bucketName, sourceKey, minio.GetObjectOptions{})
+	if err != nil {
+		return "", err
+	}
+
+	objectBuf := new(bytes.Buffer)
+	_, _ = objectBuf.ReadFrom(object)
+	objectExt := media.DetectExtension(objectBuf.Bytes())
+	reqParams := make(url.Values)
+	reqParams.Set("response-content-disposition", "attachment;filename="+strconv.Quote(sourceKey+objectExt))
+
+	// Generates a presigned url which expires in a day.
+	preSignedURL, err := s.minioClient.PresignedGetObject(context.Background(), s.bucketName, sourceKey, time.Second*24*60*60, reqParams)
+	if err != nil {
+		return "", err
+	}
+	targetURl = preSignedURL.String()
+	return
 }
 
 var _ mediastore.Service = &Service{}

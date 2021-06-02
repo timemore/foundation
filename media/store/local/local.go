@@ -61,11 +61,15 @@ func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadIn
 		return "", errors.Wrap("write content", err)
 	}
 
-	// TODO: final URL! ask the HTTP server to provide this.
 	return UploadOutput{
 		Directory: s.directoryPath,
 		Key:       objectKey,
 	}, nil
+}
+
+func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error) {
+	// TODO: final URL! ask the HTTP server to provide this.
+	return
 }
 
 var _ mediastore.Service = &Service{}

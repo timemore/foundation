@@ -11,6 +11,10 @@ func DetectType(buf []byte) string {
 	return mimetype.Detect(buf).String()
 }
 
+func DetectExtension(buf []byte) string {
+	return mimetype.Detect(buf).Extension()
+}
+
 type MediaTypeInfo interface {
 	// MediaType returns the type of media for this info
 	MediaType() MediaType
