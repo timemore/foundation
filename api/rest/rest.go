@@ -6,7 +6,8 @@ import (
 )
 
 type ErrorResponse struct {
-	Code string `json:"code:omitempty"`
+	// Code this will be used as error code
+	Code string `json:"code,omitempty"`
 
 	// We use the term description because it describes the error
 	// to the developer rather than a message for the end user.
