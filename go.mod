@@ -5,7 +5,7 @@ go 1.15
 require (
 	github.com/aws/aws-sdk-go v1.38.52
 	github.com/emicklei/go-restful/v3 v3.5.1
-	github.com/gabriel-vasile/mimetype v1.3.0
+	github.com/gabriel-vasile/mimetype v1.3.1
 	github.com/google/uuid v1.2.0
 	github.com/gopherjs/gopherjs v0.0.0-20210530221158-9a6984c0bd90 // indirect
 	github.com/joho/godotenv v1.3.0
