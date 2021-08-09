@@ -3,7 +3,7 @@ module github.com/timemore/foundation
 go 1.15
 
 require (
-	github.com/aws/aws-sdk-go v1.39.4
+	github.com/aws/aws-sdk-go v1.40.17
 	github.com/emicklei/go-restful/v3 v3.5.1
 	github.com/gabriel-vasile/mimetype v1.3.1
 	github.com/google/uuid v1.2.0
