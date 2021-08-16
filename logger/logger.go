@@ -66,7 +66,13 @@ func NewPkgLogger() PkgLogger {
 			zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
 			newRollingFile(cfg),
 		}
-		w, err := zlogsentry.New("https://0b1da1c9d24049e2ae313a216e578263@o415299.ingest.sentry.io/5908432")
+		zlogLevels := []zerolog.Level{
+			zerolog.WarnLevel,
+			zerolog.FatalLevel,
+			zerolog.DebugLevel,
+			zerolog.PanicLevel,
+		}
+		w, err := zlogsentry.New("https://0b1da1c9d24049e2ae313a216e578263@o415299.ingest.sentry.io/5908432", zlogsentry.WithLevels(zlogLevels...))
 		if err != nil {
 			panic(err)
 		}
