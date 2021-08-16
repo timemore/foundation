@@ -7,6 +7,7 @@ import (
 	"path"
 	"time"
 
+	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/rez-go/stev"
 	"github.com/rs/zerolog"
 	"github.com/tomasen/realip"
@@ -61,8 +62,17 @@ func NewPkgLogger() PkgLogger {
 	cfg := configSkeletonPtr()
 	err := stev.LoadEnv(EnvPrefixDefault, &cfg)
 	if err == nil {
-		consoleWriter := zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339}
-		mw := zerolog.MultiLevelWriter(consoleWriter, newRollingFile(cfg))
+		writers := []io.Writer{
+			zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
+			newRollingFile(cfg),
+		}
+		w, err := zlogsentry.New("https://0b1da1c9d24049e2ae313a216e578263@o415299.ingest.sentry.io/5908432")
+		if err != nil {
+			panic(err)
+		}
+
+		defer w.Close()
+		mw := zerolog.MultiLevelWriter(writers...)
 		logger = logger.Output(mw)
 	}
 	logCtx := logger.With().Timestamp().CallerWithSkipFrameCount(2)
