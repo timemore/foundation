@@ -3,8 +3,8 @@ module github.com/timemore/foundation
 go 1.15
 
 require (
-	github.com/archdx/zerolog-sentry v0.0.1 // indirect
-	github.com/aws/aws-sdk-go v1.39.4
+	github.com/archdx/zerolog-sentry v0.0.1
+	github.com/aws/aws-sdk-go v1.40.22
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/emicklei/go-restful/v3 v3.5.1
 	github.com/gabriel-vasile/mimetype v1.3.1
