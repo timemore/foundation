@@ -7,7 +7,6 @@ import (
 	"path"
 	"time"
 
-	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/rez-go/stev"
 	"github.com/rs/zerolog"
 	"github.com/tomasen/realip"
@@ -66,18 +65,6 @@ func NewPkgLogger() PkgLogger {
 			zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
 			newRollingFile(cfg),
 		}
-		zlogLevels := []zerolog.Level{
-			zerolog.WarnLevel,
-			zerolog.FatalLevel,
-			zerolog.DebugLevel,
-			zerolog.PanicLevel,
-		}
-		w, err := zlogsentry.New("https://0b1da1c9d24049e2ae313a216e578263@o415299.ingest.sentry.io/5908432", zlogsentry.WithLevels(zlogLevels...))
-		if err != nil {
-			panic(err)
-		}
-
-		defer w.Close()
 		mw := zerolog.MultiLevelWriter(writers...)
 		logger = logger.Output(mw)
 	}
