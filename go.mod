@@ -8,6 +8,7 @@ require (
 	github.com/gabriel-vasile/mimetype v1.3.1
 	github.com/google/uuid v1.2.0
 	github.com/gopherjs/gopherjs v0.0.0-20210707094841-eea289f08d45 // indirect
+	github.com/gorilla/schema v1.2.0 // indirect
 	github.com/jinzhu/gorm v1.9.16
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/joho/godotenv v1.3.0
