@@ -5,7 +5,6 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
@@ -266,15 +265,11 @@ func inArray(str string, haystacks []string) bool {
 
 func (lf *LogFilter) parseArray(anArray []interface{}) {
 	for _, val := range anArray {
-		switch concreteVal := val.(type) {
+		switch val.(type) {
 		case map[string]interface{}:
 			lf.mapFilter(val.(map[string]interface{}))
-
 		case []interface{}:
 			lf.parseArray(val.([]interface{}))
-		default:
-			fmt.Println("Index :", concreteVal)
-
 		}
 	}
 }
