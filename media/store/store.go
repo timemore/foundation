@@ -55,6 +55,9 @@ const nameGenHashLength = 16
 
 const nameGenKeyDefault = "N0k3y"
 
+// GenerateName is used to generate a name, for file or other identifier
+// based on the content. It utilized hash so the result could be used to
+// prevent duplicates when storing the media object
 func (mediaStore *Store) GenerateName(stream io.Reader) string {
 	keyBytes := []byte(mediaStore.config.NameGenerationKey)
 	if len(keyBytes) == 0 {

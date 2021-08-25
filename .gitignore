@@ -15,6 +15,7 @@
 # IDE files
 .idea
 .DevContainer
+.devcontainer
 
 # Dependency directories (remove the comment below to include it)
 # vendor/

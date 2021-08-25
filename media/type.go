@@ -11,6 +11,7 @@ const (
 	MediaType_IMAGE              MediaType = 5
 	MediaType_AUDIO              MediaType = 6
 	MediaType_VIDEO              MediaType = 7
+	MediaType_FILE               MediaType = 8
 )
 
 var MediaType_name = map[int32]string{
@@ -20,6 +21,7 @@ var MediaType_name = map[int32]string{
 	5: "IMAGE",
 	6: "AUDIO",
 	7: "VIDEO",
+	8: "FILE",
 }
 
 var MediaType_Value = map[string]int32{
@@ -29,6 +31,7 @@ var MediaType_Value = map[string]int32{
 	"IMAGE":                  5,
 	"AUDIO":                  6,
 	"VIDEO":                  7,
+	"FILE":                   8,
 }
 
 func (x MediaType) String() string {
