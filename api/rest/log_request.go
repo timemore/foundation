@@ -68,24 +68,24 @@ func (lf *LogFilter) Filter(req *restful.Request, resp *restful.Response, chain 
 			ipAddr = req.Request.RemoteAddr
 		}
 		bodyLog := LoggerBody{}
-		var jsonbRequestBody propertyMap
-		var jsonbResponseBody propertyMap
-		var mappedBody map[string]interface{}
-		if err := json.Unmarshal(inBody, &mappedBody); err == nil {
-			lf.mapFilter(mappedBody)
-			inBody, _ = json.Marshal(mappedBody)
-		}
-		if err := json.Unmarshal(inBody, &jsonbRequestBody); err == nil {
-			bodyLog.Request = jsonbRequestBody
+		var mapPayload propertyMap
+		if err := json.Unmarshal(inBody, &mapPayload); err == nil {
+			lf.mapFilter(mapPayload)
+			bodyLog.Request = mapPayload
 		}
 
-		if err := json.Unmarshal(c.Bytes(), &jsonbResponseBody); err == nil {
-			bodyLog.Response = jsonbResponseBody
+		var mapResponse propertyMap
+		if err := json.Unmarshal(c.Bytes(), &mapResponse); err == nil {
+			lf.mapFilter(mapResponse)
+			bodyLog.Response = mapResponse
 		}
-		if bHeader, err := json.Marshal(req.Request.Header); err == nil {
-			var jsonbRequestHeader propertyMap
-			_ = json.Unmarshal(bHeader, &jsonbRequestHeader)
-			bodyLog.Header = jsonbRequestHeader
+
+		reqHeader := req.Request.Header
+		if bHeader, err := json.Marshal(reqHeader); err == nil {
+			var mapHeader propertyMap
+			_ = json.Unmarshal(bHeader, &mapHeader)
+			lf.mapFilter(mapHeader)
+			bodyLog.Header = mapHeader
 		}
 
 		inBodyLog, err := json.Marshal(&bodyLog)
