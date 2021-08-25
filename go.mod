@@ -7,7 +7,7 @@ require (
 	github.com/emicklei/go-restful/v3 v3.5.1
 	github.com/gabriel-vasile/mimetype v1.3.1
 	github.com/golang/protobuf v1.5.2 // indirect
-	github.com/google/uuid v1.2.0
+	github.com/google/uuid v1.3.0
 	github.com/gopherjs/gopherjs v0.0.0-20210707094841-eea289f08d45 // indirect
 	github.com/gorilla/schema v1.2.0
 	github.com/jmoiron/sqlx v1.3.4
