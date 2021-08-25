@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/aws/aws-sdk-go v1.39.4
-	github.com/emicklei/go-restful/v3 v3.5.1
+	github.com/emicklei/go-restful/v3 v3.5.2
 	github.com/gabriel-vasile/mimetype v1.3.1
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/uuid v1.2.0
