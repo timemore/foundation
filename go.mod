@@ -23,7 +23,7 @@ require (
 	github.com/minio/md5-simd v1.1.2 // indirect
 	github.com/minio/minio-go/v7 v7.0.13
 	github.com/minio/sha256-simd v1.0.0 // indirect
-	github.com/nyaruka/phonenumbers v1.0.70
+	github.com/nyaruka/phonenumbers v1.0.71
 	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
 	github.com/rs/xid v1.3.0 // indirect
