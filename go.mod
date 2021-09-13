@@ -26,8 +26,7 @@ require (
 	github.com/nyaruka/phonenumbers v1.0.70
 	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
 	github.com/rogpeppe/go-internal v1.8.0 // indirect
-	github.com/rs/xid v1.3.0 // indirect
-	github.com/rs/zerolog v1.23.0
+	github.com/rs/zerolog v1.25.0
 	github.com/smartystreets/assertions v1.2.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
