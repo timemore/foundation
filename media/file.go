@@ -5,6 +5,8 @@ var fileAllowedContentTypes = []string{
 	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 	"application/pdf",
 	"text/csv",
+	"application/rtf",
+	"text/plain",
 }
 
 type fileMediaTypeInfo struct {
