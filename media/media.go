@@ -31,6 +31,10 @@ var mediaTypeRegistry = map[MediaType]MediaTypeInfo{
 		mediaType:     MediaType_IMAGE,
 		directoryName: "images",
 	},
+	MediaType_FILE: &fileMediaTypeInfo{
+		mediaType:     MediaType_FILE,
+		directoryName: "files",
+	},
 }
 
 func GetMediaTypeInfoByTypeName(mediaTypeName string) MediaTypeInfo {
