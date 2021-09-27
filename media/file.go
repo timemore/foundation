@@ -1,6 +1,11 @@
 package media
 
-var fileAllowedContentTypes = []string{"application/pdf"}
+var fileAllowedContentTypes = []string{
+	"application/msword",
+	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+	"application/pdf",
+	"text/csv",
+}
 
 type fileMediaTypeInfo struct {
 	mediaType     MediaType
