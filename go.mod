@@ -4,7 +4,7 @@ go 1.15
 
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
-	github.com/aws/aws-sdk-go v1.40.29
+	github.com/aws/aws-sdk-go v1.40.49
 	github.com/emicklei/go-restful/v3 v3.5.2
 	github.com/gabriel-vasile/mimetype v1.3.1
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
