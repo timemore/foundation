@@ -15,6 +15,18 @@ func DetectExtension(buf []byte) string {
 	return mimetype.Detect(buf).Extension()
 }
 
+func IsAllowedContentType(contentType string, allowedContentType []string) bool {
+	if len(allowedContentType) != 0 {
+		for _, ct := range allowedContentType {
+			if ct == contentType {
+				return true
+			}
+		}
+	}
+
+	return false
+}
+
 type MediaTypeInfo interface {
 	// MediaType returns the type of media for this info
 	MediaType() MediaType
@@ -30,6 +42,10 @@ var mediaTypeRegistry = map[MediaType]MediaTypeInfo{
 	MediaType_IMAGE: &imageMediaTypeInfo{
 		mediaType:     MediaType_IMAGE,
 		directoryName: "images",
+	},
+	MediaType_FILE: &fileMediaTypeInfo{
+		mediaType:     MediaType_FILE,
+		directoryName: "files",
 	},
 }
 
