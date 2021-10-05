@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 	"net/url"
+	"path"
 	"strconv"
 	"time"
 
@@ -18,6 +19,7 @@ import (
 type Config struct {
 	Region          string `env:"REGION"`
 	BucketName      string `env:"BUCKET_NAME"`
+	BasePath        string `env:"BASE_PATH"`
 	AccessKeyID     string `env:"ACCESS_KEY_ID,required"`
 	SecretAccessKey string `env:"SECRET_ACCESS_KEY,required"`
 	Endpoint        string `env:"ENDPOINT,required"`
@@ -75,6 +77,7 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	// 	make bucket
 	bucketName := conf.BucketName
 	location := conf.Region
+	basepath := conf.BasePath
 	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
 	if err != nil {
 		// Check to see if we already own this bucket (which happens if you run this twice)
@@ -86,18 +89,25 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 
 	return &Service{
 		bucketName:  bucketName,
+		basePath:    basepath,
 		minioClient: minioClient,
 	}, nil
 }
 
 type Service struct {
 	bucketName  string
+	basePath    string
 	minioClient *minio.Client
 }
 
 func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
 	ctx := context.Background()
 	bucketName := s.bucketName
+	if s.basePath != "" {
+		targetKey = path.Join(s.basePath, targetKey)
+	}
+
+	targetKey = path.Clean(targetKey)
 	info, err := s.minioClient.PutObject(ctx, bucketName, targetKey, contentSource, -1, minio.PutObjectOptions{})
 	if err != nil {
 		return nil, errors.Wrap("upload", err)
