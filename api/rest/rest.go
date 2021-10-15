@@ -38,7 +38,7 @@ func (r Responder) encodeToJSON(jsonData interface{}) error {
 	return json.NewEncoder(r.w).Encode(jsonData)
 }
 
-func (r Responder) Error(errorData ErrorResponse, httpStatusCode int) {
+func (r Responder) Error(errorData interface{}, httpStatusCode int) {
 	r.w.Header().Set("Content-Type", "application/json")
 	r.w.WriteHeader(httpStatusCode)
 	err := r.encodeToJSON(errorData)
@@ -64,7 +64,7 @@ func (r Responder) Success(successData interface{}) {
 func (r Responder) SuccessWithHTTPStatusCode(successData interface{}, httpStatusCode int) {
 	r.w.Header().Set("Content-Type", "application/json")
 	r.w.WriteHeader(httpStatusCode)
-	err := json.NewEncoder(r.w).Encode(successData)
+	err := r.encodeToJSON(successData)
 	if err != nil {
 		panic(err)
 	}
