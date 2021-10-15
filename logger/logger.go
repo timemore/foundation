@@ -24,14 +24,14 @@ type PkgLogger struct {
 const EnvPrefixDefault = "LOG_"
 
 func newRollingFile(config Config) io.Writer {
-	filena := config.Filename
-	if filena == "" {
-		filena = "service.log"
+	filename := config.Filename
+	if filename == "" {
+		filename = "service.log"
 	}
 	if err := os.MkdirAll(config.Directory, 0744); err != nil {
 		return nil
 	}
-	logFilename := path.Join(config.Directory, filena)
+	logFilename := path.Join(config.Directory, filename)
 
 	return &lumberjack.Logger{
 		Filename:   logFilename,
@@ -49,15 +49,17 @@ func newLogger() Logger {
 	return zerolog.New(os.Stderr)
 }
 
-func NewPkgLogger() PkgLogger {
+func newLoggerByEnv() Logger {
 	logger := newLogger()
-	logLevelStr := os.Getenv(EnvPrefixDefault + "LEVEL")
-	if logLevelStr != "" {
+
+	if logLevelStr := os.Getenv(EnvPrefixDefault + "LEVEL"); logLevelStr != "" {
 		logLevel, err := zerolog.ParseLevel(logLevelStr)
-		if err == nil {
-			logger = logger.Level(logLevel)
+		if err != nil {
+			panic(err)
 		}
+		logger = logger.Level(logLevel)
 	}
+
 	cfg := configSkeletonPtr()
 	err := stev.LoadEnv(EnvPrefixDefault, &cfg)
 	if err == nil {
@@ -68,7 +70,20 @@ func NewPkgLogger() PkgLogger {
 		mw := zerolog.MultiLevelWriter(writers...)
 		logger = logger.Output(mw)
 	}
-	logCtx := logger.With().Timestamp().CallerWithSkipFrameCount(2)
+
+	logCtx := logger.With()
+	if os.Getenv("AWS_EXECUTION_ENV") != "" {
+		// 	TODO: if we are detecting an environment which already providing
+		// 	timestamp, we should disable the timestamp by default
+	} else {
+		logCtx = logCtx.Timestamp()
+	}
+
+	return logCtx.Logger()
+}
+func NewPkgLogger() PkgLogger {
+	logCtx := newLoggerByEnv().With().CallerWithSkipFrameCount(2)
+
 	return PkgLogger{logCtx.Logger()}
 }
 

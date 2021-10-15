@@ -48,25 +48,25 @@ func GrantTypeFromString(s string) GrantType {
 type ErrorCode string
 
 const (
-	// 4.1.2.1, 4.2.2.1, 5.2
+	// ErrorInvalidRequest 4.1.2.1, 4.2.2.1, 5.2
 	ErrorInvalidRequest ErrorCode = "invalid_request"
-	// 4.1.2.1, 4.2.2.1, 5.2
+	// ErrorUnauthorizedClient 4.1.2.1, 4.2.2.1, 5.2
 	ErrorUnauthorizedClient ErrorCode = "unauthorized_client"
-	// 4.1.2.1, 4.2.2.1
+	// ErrorAccessDenied 4.1.2.1, 4.2.2.1
 	ErrorAccessDenied ErrorCode = "access_denied"
-	// 4.1.2.1, 4.2.2.1
-	ErrorUnspportedResponseType ErrorCode = "unsupported_response_type"
-	// 4.1.2.1, 4.2.2.1, 5.2
+	// ErrorUnsupportedResponseType 4.1.2.1, 4.2.2.1
+	ErrorUnsupportedResponseType ErrorCode = "unsupported_response_type"
+	// ErrorInvalidScope 4.1.2.1, 4.2.2.1, 5.2
 	ErrorInvalidScope ErrorCode = "invalid_scope"
-	// 4.1.2.1, 4.2.2.1
+	// ErrorServerError 4.1.2.1, 4.2.2.1
 	ErrorServerError ErrorCode = "server_error"
-	// 4.1.2.1, 4.2.2.1
+	// ErrorTemporarilyUnavailable 4.1.2.1, 4.2.2.1
 	ErrorTemporarilyUnavailable ErrorCode = "temporarily_unavailable"
-	// 5.2
+	// ErrorInvalidClient 5.2
 	ErrorInvalidClient ErrorCode = "invalid_client"
-	// 5.2
+	// ErrorInvalidGrant 5.2
 	ErrorInvalidGrant ErrorCode = "invalid_grant"
-	// 5.2
+	// ErrorUnsupportedGrantType 5.2
 	ErrorUnsupportedGrantType ErrorCode = "unsupported_grant_type"
 )
 
@@ -105,7 +105,7 @@ func (responseType ResponseType) String() string { return string(responseType) }
 
 type TokenType string
 
-//NOTE: token types are case-insensitive
+// TokenTypeBearer NOTE: token types are case-insensitive
 const (
 	TokenTypeBearer TokenType = "bearer"
 )

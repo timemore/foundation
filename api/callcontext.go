@@ -13,7 +13,7 @@ import (
 type RequestID = uuid.UUID
 
 // CallContext holds information obtained from the request. This information
-// are generally obtained from the request's metadata (e.g., HTTP request
+// is generally obtained from the request's metadata (e.g., HTTP request
 // header).
 type CallContext interface {
 	context.Context
