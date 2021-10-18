@@ -6,7 +6,7 @@ require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.40.59
 	github.com/emicklei/go-restful/v3 v3.7.0
-	github.com/gabriel-vasile/mimetype v1.3.1
+	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
