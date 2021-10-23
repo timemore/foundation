@@ -1,4 +1,4 @@
-GOLANG_IMAGE ?= golang:1.15
+GOLANG_IMAGE ?= golang:1.16
 
 .PHONY: fmt deps-up
 
@@ -12,6 +12,7 @@ fmt:
 
 deps-up:
 	@echo "Updating all dependencies..."
+	@echo "running on $(CURDIR)"
 	@docker run --rm \
 		-v $(CURDIR):/workspace \
 		--workdir /workspace \
