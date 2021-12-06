@@ -5,7 +5,7 @@ go 1.16
 require (
 	github.com/BurntSushi/toml v0.4.1 // indirect
 	github.com/aws/aws-sdk-go v1.41.19
-	github.com/emicklei/go-restful/v3 v3.7.1
+	github.com/emicklei/go-restful/v3 v3.7.3
 	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/go-sql-driver/mysql v1.6.0 // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
