@@ -20,7 +20,7 @@ require (
 	github.com/lib/pq v1.10.2 // indirect
 	github.com/mattn/go-sqlite3 v1.14.8 // indirect
 	github.com/minio/md5-simd v1.1.2 // indirect
-	github.com/minio/minio-go/v7 v7.0.15
+	github.com/minio/minio-go/v7 v7.0.18
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/nyaruka/phonenumbers v1.0.73
 	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
