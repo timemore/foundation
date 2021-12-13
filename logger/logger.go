@@ -2,11 +2,13 @@ package logger
 
 import (
 	"io"
+	stdlog "log"
 	"net/http"
 	"os"
 	"path"
 	"time"
 
+	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/rez-go/stev"
 	"github.com/rs/zerolog"
 	"github.com/tomasen/realip"
@@ -68,6 +70,19 @@ func newLoggerByEnv() Logger {
 		writers := []io.Writer{
 			zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
 			newRollingFile(cfg),
+		}
+
+		if sentryDSN, found := os.LookupEnv(EnvPrefixDefault + "SENTRY_DSN"); found {
+			if sentryDSN != "" {
+				w, err := zlogsentry.New(sentryDSN)
+				if err != nil {
+					stdlog.Fatal(err)
+				}
+				if w != nil {
+					writers = append(writers, w)
+				}
+				defer w.Close()
+			}
 		}
 		mw := zerolog.MultiLevelWriter(writers...)
 		logger = logger.Output(mw)
