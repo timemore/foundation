@@ -27,11 +27,11 @@ require (
 	github.com/minio/sha256-simd v1.0.0 // indirect
 	github.com/nyaruka/phonenumbers v1.0.73
 	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
-	github.com/rs/zerolog v1.26.0
+	github.com/rs/zerolog v1.26.1
 	github.com/stretchr/testify v1.7.0 // indirect
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
-	golang.org/x/crypto v0.0.0-20211209193657-4570a0811e8b
+	golang.org/x/crypto v0.0.0-20211215165025-cf75a172585e
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
