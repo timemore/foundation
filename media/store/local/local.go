@@ -1,6 +1,7 @@
 package local
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"path/filepath"
@@ -69,6 +70,10 @@ func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadIn
 
 func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error) {
 	// TODO: final URL! ask the HTTP server to provide this.
+	return
+}
+
+func (s *Service) GetObject(sourceKey string) (buffer *bytes.Buffer, err error) {
 	return
 }
 

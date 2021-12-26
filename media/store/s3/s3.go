@@ -1,6 +1,7 @@
 package s3
 
 import (
+	"bytes"
 	"io"
 	"time"
 
@@ -73,7 +74,8 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 		uploader: s3manager.NewUploader(sess, func(u *s3manager.Uploader) {
 			u.PartSize = uploadPartSize
 		}),
-		svc: s3.New(sess),
+		downloader: s3manager.NewDownloader(sess),
+		svc:        s3.New(sess),
 	}, nil
 }
 
@@ -81,6 +83,7 @@ type Service struct {
 	bucketName string
 	uploader   *s3manager.Uploader
 	svc        *s3.S3
+	downloader *s3manager.Downloader
 }
 
 func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
@@ -107,6 +110,20 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error
 	}
 
 	return targetURL, nil
+}
+
+func (s *Service) GetObject(sourceKey string) (buffer *bytes.Buffer, err error) {
+	buff := &aws.WriteAtBuffer{}
+	_, err = s.downloader.Download(buff,
+		&s3.GetObjectInput{
+			Bucket: aws.String(s.bucketName),
+			Key:    aws.String(sourceKey),
+		})
+	if err != nil {
+		return nil, err
+	}
+
+	return bytes.NewBuffer(buff.Bytes()), nil
 }
 
 var _ mediastore.Service = &Service{}

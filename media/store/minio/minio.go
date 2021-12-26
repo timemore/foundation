@@ -130,12 +130,37 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error
 	reqParams.Set("response-content-disposition", "attachment;filename="+strconv.Quote(sourceKey+objectExt))
 
 	// Generates a presigned url which expires in a day.
-	preSignedURL, err := s.minioClient.PresignedGetObject(context.Background(), s.bucketName, sourceKey, time.Second*24*60*60, reqParams)
+	preSignedURL, err := s.minioClient.PresignedGetObject(ctx, s.bucketName, sourceKey, time.Second*24*60*60, reqParams)
 	if err != nil {
 		return "", err
 	}
 	targetURl = preSignedURL.String()
 	return
+}
+
+func (s *Service) GetObject(sourceKey string) (buffer *bytes.Buffer, err error) {
+	ctx := context.Background()
+	reader, err := s.minioClient.GetObject(ctx, s.bucketName, sourceKey, minio.GetObjectOptions{})
+	if err != nil {
+		return nil, err
+	}
+	defer reader.Close()
+	buffer = new(bytes.Buffer)
+	buf := make([]byte, 1*1024*1024)
+	dataSize := 0
+	for {
+		n, err := reader.Read(buf)
+		if err != nil && err != io.EOF {
+			panic(err)
+		}
+		dataSize += n
+		buffer.Write(buf)
+		if err == io.EOF || n == 0 {
+			break
+		}
+	}
+
+	return buffer, nil
 }
 
 var _ mediastore.Service = &Service{}

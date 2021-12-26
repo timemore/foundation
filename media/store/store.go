@@ -1,6 +1,7 @@
 package store
 
 import (
+	"bytes"
 	"encoding/hex"
 	"io"
 	"strconv"
@@ -13,6 +14,12 @@ import (
 type Store struct {
 	config        Config
 	serviceClient Service
+}
+
+type Object interface {
+	io.Reader
+	io.Seeker
+	io.WriterAt
 }
 
 func New(config Config) (*Store, error) {
@@ -49,6 +56,10 @@ func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, media
 
 func (mediaStore *Store) GetPublicURL(sourceKey string) (publicURL string, err error) {
 	return mediaStore.serviceClient.GetPublicObject(sourceKey)
+}
+
+func (mediaStore *Store) Download(sourceKey string) (buffer *bytes.Buffer, err error) {
+	return mediaStore.serviceClient.GetObject(sourceKey)
 }
 
 const nameGenHashLength = 16
