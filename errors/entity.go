@@ -31,7 +31,10 @@ var (
 )
 
 func (e entityError) Error() string {
-	errMsg := e.err.Error()
+	var errMsg string
+	if e.err != nil {
+		errMsg = e.err.Error()
+	}
 	if e.identifier != "" {
 		if errMsg != "" {
 			return e.identifier + ": " + errMsg
