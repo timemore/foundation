@@ -51,8 +51,10 @@ func (e argumentError) Error() string {
 		}
 		return "arg " + e.identifier + " invalid"
 	}
-	if errMsg := e.err.Error(); errMsg != "" {
-		return "arg " + errMsg
+	if e.err != nil {
+		if errMsg := e.err.Error(); errMsg != "" {
+			return "arg " + errMsg
+		}
 	}
 	return "invalid arg"
 }
