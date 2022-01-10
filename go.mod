@@ -3,7 +3,7 @@ module github.com/timemore/foundation
 go 1.17
 
 require (
-	github.com/archdx/zerolog-sentry v0.0.1
+	github.com/archdx/zerolog-sentry v0.0.2
 	github.com/aws/aws-sdk-go v1.42.25
 	github.com/emicklei/go-restful/v3 v3.7.3
 	github.com/gabriel-vasile/mimetype v1.4.0
