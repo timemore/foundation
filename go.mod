@@ -12,7 +12,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/joho/godotenv v1.4.0
 	github.com/minio/minio-go/v7 v7.0.20
-	github.com/nyaruka/phonenumbers v1.0.73
+	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
 	github.com/rs/zerolog v1.26.1
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
