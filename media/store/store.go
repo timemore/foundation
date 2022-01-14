@@ -59,7 +59,14 @@ func (mediaStore *Store) GetPublicURL(sourceKey string) (publicURL string, err e
 }
 
 func (mediaStore *Store) Download(sourceKey string) (buffer *bytes.Buffer, err error) {
-	return mediaStore.serviceClient.GetObject(sourceKey)
+	stream, err := mediaStore.serviceClient.GetObject(sourceKey)
+	if err != nil {
+		return nil, err
+	}
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(stream)
+
+	return buf, nil
 }
 
 const nameGenHashLength = 16

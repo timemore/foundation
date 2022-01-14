@@ -138,29 +138,32 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error
 	return
 }
 
-func (s *Service) GetObject(sourceKey string) (buffer *bytes.Buffer, err error) {
-	ctx := context.Background()
-	reader, err := s.minioClient.GetObject(ctx, s.bucketName, sourceKey, minio.GetObjectOptions{})
+func (s *Service) GetObject(sourceKey string) (stream media.Reader, err error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	stream, err = s.minioClient.GetObject(ctx, s.bucketName, sourceKey, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
-	defer reader.Close()
-	buffer = new(bytes.Buffer)
-	buf := make([]byte, 1*1024*1024)
-	dataSize := 0
-	for {
-		n, err := reader.Read(buf)
-		if err != nil && err != io.EOF {
-			panic(err)
-		}
-		dataSize += n
-		buffer.Write(buf)
-		if err == io.EOF || n == 0 {
-			break
-		}
-	}
 
-	return buffer, nil
+	return
+	// buffer = new(bytes.Buffer)
+	// buf := make([]byte, 1*1024*1024)
+	// dataSize := 0
+	// for {
+	// 	n, err := reader.Read(buf)
+	// 	if err != nil && err != io.EOF {
+	// 		panic(err)
+	// 	}
+	// 	dataSize += n
+	// 	buffer.Write(buf)
+	// 	if err == io.EOF || n == 0 {
+	// 		break
+	// 	}
+	// }
+
+	// return buffer, nil
 }
 
 var _ mediastore.Service = &Service{}

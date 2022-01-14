@@ -1,5 +1,7 @@
 package media
 
+import "io"
+
 var fileAllowedContentTypes = []string{
 	"application/msword",
 	"application/vnd.openxmlformats-officedocument.wordprocessingml.document",
@@ -7,6 +9,12 @@ var fileAllowedContentTypes = []string{
 	"text/csv",
 	"application/rtf",
 	"text/plain",
+}
+
+type Reader interface {
+	io.Reader
+	io.Seeker
+	io.ReadSeeker
 }
 
 type fileMediaTypeInfo struct {
