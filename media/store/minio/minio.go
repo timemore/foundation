@@ -138,16 +138,17 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error
 	return
 }
 
-func (s *Service) GetObject(sourceKey string) (stream media.Reader, err error) {
+func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	stream, err = s.minioClient.GetObject(ctx, s.bucketName, sourceKey, minio.GetObjectOptions{})
+	object, err := s.minioClient.GetObject(ctx, s.bucketName, sourceKey, minio.GetObjectOptions{})
 	if err != nil {
 		return nil, err
 	}
-
-	return
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(object)
+	return buf, nil
 	// buffer = new(bytes.Buffer)
 	// buf := make([]byte, 1*1024*1024)
 	// dataSize := 0

@@ -1,12 +1,12 @@
 package local
 
 import (
+	"bytes"
 	"io"
 	"os"
 	"path/filepath"
 
 	"github.com/timemore/foundation/errors"
-	"github.com/timemore/foundation/media"
 	mediastore "github.com/timemore/foundation/media/store"
 )
 
@@ -73,7 +73,7 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error
 	return
 }
 
-func (s *Service) GetObject(sourceKey string) (stream media.Reader, err error) {
+func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) {
 	return
 }
 

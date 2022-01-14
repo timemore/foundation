@@ -11,7 +11,6 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3"
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/timemore/foundation/errors"
-	"github.com/timemore/foundation/media"
 	mediastore "github.com/timemore/foundation/media/store"
 )
 
@@ -113,7 +112,7 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error
 	return targetURL, nil
 }
 
-func (s *Service) GetObject(sourceKey string) (stream media.Reader, err error) {
+func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) {
 	buff := &aws.WriteAtBuffer{}
 	_, err = s.downloader.Download(buff,
 		&s3.GetObjectInput{
@@ -123,8 +122,9 @@ func (s *Service) GetObject(sourceKey string) (stream media.Reader, err error) {
 	if err != nil {
 		return nil, err
 	}
-
-	return bytes.NewReader(buff.Bytes()), nil
+	buf := new(bytes.Buffer)
+	buf.Read(buff.Bytes())
+	return buf, nil
 }
 
 var _ mediastore.Service = &Service{}
