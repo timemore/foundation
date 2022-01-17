@@ -65,7 +65,6 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	if err != nil {
 		panic(err)
 	}
-	defer client.Close()
 
 	bucketName := conf.BucketName
 	bucket := client.Bucket(bucketName)
