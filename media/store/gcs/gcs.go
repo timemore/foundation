@@ -5,6 +5,7 @@ import (
 	"context"
 	"io"
 	"os"
+	"path"
 	"time"
 
 	gcs "cloud.google.com/go/storage"
@@ -18,6 +19,7 @@ type Config struct {
 	BucketName     string `env:"BUCKET_NAME"`
 	ProjectID      string `env:"PROJECT_ID"`
 	CredentialFile string `env:"CREDENTIAL_FILE"`
+	Basepath       string `env:"BASEPATH"`
 }
 
 const ServiceName = "gcs"
@@ -92,6 +94,7 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 		bucketName: bucketName,
 		projectID:  conf.ProjectID,
 		gcsClient:  client,
+		basePath:   conf.Basepath,
 	}, nil
 }
 
@@ -99,10 +102,33 @@ type Service struct {
 	bucketName string
 	projectID  string
 	gcsClient  *gcs.Client
+	basePath   string
+}
+
+type UploadInfo struct {
+	Bucket string
+	Key    string
 }
 
 func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
-	return nil, nil
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*50)
+	defer cancel()
+	if s.basePath != "" {
+		targetKey = path.Join(s.basePath, targetKey)
+	}
+	// Upload an object with storage.Writer.
+	wc := s.gcsClient.Bucket(s.bucketName).Object(targetKey).NewWriter(ctx)
+	if _, err = io.Copy(wc, contentSource); err != nil {
+		return nil, errors.Wrap("copy file io.Copy", err)
+	}
+	if err := wc.Close(); err != nil {
+		return nil, errors.Wrap("writer.Close", err)
+	}
+
+	return UploadInfo{
+		Bucket: s.bucketName,
+		Key:    targetKey,
+	}, nil
 }
 
 func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error) {
