@@ -1,6 +1,11 @@
 package media
 
-var imageAllowedContentTypes = []string{"image/jpg", "image/jpeg", "image/png"}
+var imageAllowedContentTypes = []string{
+	"image/jpg",
+	"image/jpeg",
+	"image/png",
+	"image/gif",
+}
 
 type imageMediaTypeInfo struct {
 	mediaType     MediaType

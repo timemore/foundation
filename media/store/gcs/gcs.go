@@ -3,9 +3,11 @@ package gcs
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	gcs "cloud.google.com/go/storage"
@@ -115,6 +117,9 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 	if s.basePath != "" {
 		targetKey = path.Join(s.basePath, targetKey)
 	}
+
+	targetKey = path.Clean(targetKey)
+	targetKey = strings.TrimPrefix(targetKey, "/")
 	// Upload an object with storage.Writer.
 	wc := s.gcsClient.Bucket(s.bucketName).Object(targetKey).NewWriter(ctx)
 	if _, err = io.Copy(wc, contentSource); err != nil {
@@ -131,11 +136,25 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 }
 
 func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error) {
-	return "", nil
+	objectKey := path.Join(s.bucketName, sourceKey)
+	objectKey = path.Clean(objectKey)
+	return objectKey, nil
 }
 
 func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) {
-	return nil, nil
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*50)
+	defer cancel()
+
+	rc, err := s.gcsClient.Bucket(s.bucketName).Object(sourceKey).NewReader(ctx)
+	if err != nil {
+		return nil, errors.Wrap(fmt.Sprintf("Object(%q).NewReader", sourceKey), err)
+	}
+	defer rc.Close()
+
+	buf := new(bytes.Buffer)
+	buf.ReadFrom(rc)
+
+	return buf, nil
 }
 
 var _ mediastore.Service = &Service{}
