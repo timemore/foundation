@@ -4,7 +4,7 @@ go 1.17
 
 require (
 	github.com/archdx/zerolog-sentry v0.0.2
-	github.com/aws/aws-sdk-go v1.42.34
+	github.com/aws/aws-sdk-go v1.42.35
 	github.com/emicklei/go-restful/v3 v3.7.3
 	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/google/uuid v1.3.0
@@ -44,7 +44,7 @@ require (
 	github.com/sirupsen/logrus v1.8.1 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
 	golang.org/x/net v0.0.0-20220114011407-0dd24b26b47d // indirect
-	golang.org/x/sys v0.0.0-20220111092808-5a964db01320 // indirect
+	golang.org/x/sys v0.0.0-20220114195835-da31bd327af9 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
