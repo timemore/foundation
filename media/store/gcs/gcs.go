@@ -136,9 +136,16 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 }
 
 func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error) {
-	objectKey := path.Join(s.bucketName, sourceKey)
-	objectKey = path.Clean(objectKey)
-	return objectKey, nil
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second*50)
+	defer cancel()
+
+	obj := s.gcsClient.Bucket(s.bucketName).Object(sourceKey)
+	attrs, err := obj.Attrs(ctx)
+	if err != nil {
+		return "", errors.Wrap(fmt.Sprintf("Object(%q).Attrs", sourceKey), err)
+	}
+
+	return attrs.MediaLink, nil
 }
 
 func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) {
