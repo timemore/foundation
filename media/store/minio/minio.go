@@ -149,22 +149,6 @@ func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) 
 	buf := new(bytes.Buffer)
 	buf.ReadFrom(object)
 	return buf, nil
-	// buffer = new(bytes.Buffer)
-	// buf := make([]byte, 1*1024*1024)
-	// dataSize := 0
-	// for {
-	// 	n, err := reader.Read(buf)
-	// 	if err != nil && err != io.EOF {
-	// 		panic(err)
-	// 	}
-	// 	dataSize += n
-	// 	buffer.Write(buf)
-	// 	if err == io.EOF || n == 0 {
-	// 		break
-	// 	}
-	// }
-
-	// return buffer, nil
 }
 
 var _ mediastore.Service = &Service{}
