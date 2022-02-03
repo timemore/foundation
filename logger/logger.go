@@ -74,7 +74,8 @@ func newLoggerByEnv() Logger {
 
 		if sentryDSN, found := os.LookupEnv(EnvPrefixDefault + "SENTRY_DSN"); found {
 			if sentryDSN != "" {
-				w, err := zlogsentry.New(sentryDSN)
+				levelOptions := zlogsentry.WithLevels(zerolog.WarnLevel, zerolog.DebugLevel)
+				w, err := zlogsentry.New(sentryDSN, levelOptions)
 				if err != nil {
 					stdlog.Fatal(err)
 				}
