@@ -3,7 +3,7 @@ module github.com/timemore/foundation
 go 1.17
 
 require (
-	cloud.google.com/go/storage v1.19.0
+	cloud.google.com/go/storage v1.20.0
 	github.com/archdx/zerolog-sentry v0.0.2
 	github.com/aws/aws-sdk-go v1.42.45
 	github.com/emicklei/go-restful/v3 v3.7.3
