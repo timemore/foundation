@@ -2,33 +2,12 @@ package app
 
 import (
 	"bytes"
-	"fmt"
 	"net"
-	"runtime"
 	"strings"
-	"syscall"
 )
 
 func unameString() (string, error) {
-	os := runtime.GOOS
-	switch os {
-	case "windows", "darwin":
-		return getNetworkHardwareName(), nil
-	}
-
-	utsname := syscall.Utsname{}
-	err := syscall.Uname(&utsname)
-	if err != nil {
-		return "", err
-	}
-
-	return fmt.Sprintf("%s %s %s %s %s",
-		utsStringToString(utsname.Sysname),
-		utsStringToString(utsname.Nodename),
-		utsStringToString(utsname.Release),
-		utsStringToString(utsname.Version),
-		utsStringToString(utsname.Machine),
-	), nil
+	return getNetworkHardwareName(), nil
 }
 
 func utsStringToString(utsStr [65]int8) string {
