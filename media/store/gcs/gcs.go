@@ -75,6 +75,7 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 
 	bucketName := conf.BucketName
 	if conf.BucketOperation {
+		fmt.Printf("enable bucket operation for this account")
 		bucket := client.Bucket(bucketName)
 		it := client.Buckets(ctx, conf.ProjectID)
 		for {
