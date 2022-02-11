@@ -18,10 +18,11 @@ import (
 )
 
 type Config struct {
-	BucketName     string `env:"BUCKET_NAME"`
-	ProjectID      string `env:"PROJECT_ID"`
-	CredentialFile string `env:"CREDENTIAL_FILE"`
-	Basepath       string `env:"BASEPATH"`
+	BucketName      string `env:"BUCKET_NAME"`
+	ProjectID       string `env:"PROJECT_ID"`
+	CredentialFile  string `env:"CREDENTIAL_FILE"`
+	Basepath        string `env:"BASEPATH"`
+	BucketOperation bool   `env:"BUCKET_OPERATION"`
 }
 
 const ServiceName = "gcs"
@@ -38,7 +39,11 @@ func init() {
 		})
 }
 
-func ConfigSkeleton() Config { return Config{} }
+func ConfigSkeleton() Config {
+	return Config{
+		BucketOperation: false,
+	}
+}
 
 func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	ctx := context.Background()
@@ -69,25 +74,27 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	}
 
 	bucketName := conf.BucketName
-	bucket := client.Bucket(bucketName)
-	it := client.Buckets(ctx, conf.ProjectID)
-	for {
-		battrs, err := it.Next()
-		if err == iterator.Done {
-			// Creates the new bucket.
-			ctx, cancel := context.WithTimeout(ctx, time.Second*10)
-			defer cancel()
-			if err := bucket.Create(ctx, conf.ProjectID, nil); err != nil {
-				return nil, errors.Wrap("bucket creation failed", err)
+	if conf.BucketOperation {
+		bucket := client.Bucket(bucketName)
+		it := client.Buckets(ctx, conf.ProjectID)
+		for {
+			battrs, err := it.Next()
+			if err == iterator.Done {
+				// Creates the new bucket.
+				ctx, cancel := context.WithTimeout(ctx, time.Second*10)
+				defer cancel()
+				if err := bucket.Create(ctx, conf.ProjectID, nil); err != nil {
+					return nil, errors.Wrap("bucket creation failed", err)
+				}
+				break
 			}
-			break
-		}
-		if err != nil {
-			return nil, errors.Wrap("bucket iteration", err)
-		}
+			if err != nil {
+				return nil, errors.Wrap("bucket iteration", err)
+			}
 
-		if battrs.Name == bucketName {
-			break
+			if battrs.Name == bucketName {
+				break
+			}
 		}
 	}
 
