@@ -12,7 +12,7 @@ require (
 	github.com/gorilla/schema v1.2.0
 	github.com/jmoiron/sqlx v1.3.4
 	github.com/joho/godotenv v1.4.0
-	github.com/minio/minio-go/v7 v7.0.21
+	github.com/minio/minio-go/v7 v7.0.22
 	github.com/nyaruka/phonenumbers v1.0.74
 	github.com/rez-go/stev v0.0.0-20210322061542-b92d9076c0eb
 	github.com/rs/zerolog v1.26.1
