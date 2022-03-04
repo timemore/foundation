@@ -24,7 +24,7 @@ func configSkeletonPtr() Config {
 	return Config{
 		ConsoleLog:       true,
 		EncodeLogsAsJson: true,
-		FileLogging:      true,
+		FileLogging:      false,
 		Directory:        "/var/log",
 		Filename:         "",
 		MaxSize:          2,

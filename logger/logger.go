@@ -69,7 +69,11 @@ func newLoggerByEnv() Logger {
 	if err == nil {
 		writers := []io.Writer{
 			zerolog.ConsoleWriter{Out: os.Stderr, TimeFormat: time.RFC3339},
-			newRollingFile(cfg),
+		}
+
+		if cfg.FileLogging {
+			logFile := newRollingFile(cfg)
+			writers = append(writers, logFile)
 		}
 
 		if sentryDSN, found := os.LookupEnv(EnvPrefixDefault + "SENTRY_DSN"); found {
