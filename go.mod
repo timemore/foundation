@@ -6,7 +6,7 @@ require (
 	cloud.google.com/go/storage v1.20.0
 	github.com/archdx/zerolog-sentry v0.0.2
 	github.com/aws/aws-sdk-go v1.42.51
-	github.com/emicklei/go-restful/v3 v3.7.3
+	github.com/emicklei/go-restful/v3 v3.7.4
 	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/google/uuid v1.3.0
 	github.com/gorilla/schema v1.2.0
