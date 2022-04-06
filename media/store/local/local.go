@@ -48,23 +48,41 @@ type Service struct {
 }
 
 func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
-	targetName := filepath.Join(s.directoryPath, objectKey)
-	targetFile, err := os.Create(targetName)
-	if err != nil {
-		return "", errors.Wrap("create file", err)
-	}
-	defer func() {
-		_ = targetFile.Close()
-	}()
+	if s.directoryPath != "" {
+		targetName := filepath.Join(s.directoryPath, objectKey)
+		targetFile, err := os.Create(targetName)
+		if err != nil {
+			return "", errors.Wrap("create file", err)
+		}
+		defer func() {
+			_ = targetFile.Close()
+		}()
 
-	_, err = io.Copy(targetFile, contentSource)
-	if err != nil {
-		return "", errors.Wrap("write content", err)
+		_, err = io.Copy(targetFile, contentSource)
+		if err != nil {
+			return "", errors.Wrap("write content", err)
+		}
+	}
+	stream := &bytes.Buffer{}
+	buf := make([]byte, 1*1024*1024)
+	dataSize := 0
+	for {
+		n, err := contentSource.Read(buf)
+		if err != nil && err != io.EOF {
+			panic(err)
+		}
+		dataSize += n
+
+		if _, err := stream.Write(buf); err != nil || err == io.EOF {
+			break
+		}
 	}
 
 	return UploadOutput{
 		Directory: s.directoryPath,
 		Key:       objectKey,
+		Output:    stream,
+		Size:      dataSize,
 	}, nil
 }
 
@@ -74,6 +92,29 @@ func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error
 }
 
 func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) {
+	sourceFile := filepath.Join(s.directoryPath, sourceKey)
+	if _, err := os.Stat(sourceFile); os.IsNotExist(err) {
+		return nil, errors.EntMsg(sourceFile, err.Error())
+	}
+	f, err := os.Open(sourceFile)
+	if err != nil {
+		return nil, errors.Wrap("open file", err)
+	}
+
+	buf := make([]byte, 1*1024*1024)
+	dataSize := 0
+	for {
+		n, err := f.Read(buf)
+		if err != nil && err != io.EOF {
+			panic(err)
+		}
+		dataSize += n
+
+		if _, err := stream.Write(buf); err != nil || err == io.EOF {
+			break
+		}
+	}
+
 	return
 }
 
@@ -84,4 +125,6 @@ func ConfigSkeleton() Config { return Config{} }
 type UploadOutput struct {
 	Directory string
 	Key       string
+	Output    *bytes.Buffer
+	Size      int
 }

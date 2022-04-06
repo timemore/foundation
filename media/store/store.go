@@ -82,12 +82,13 @@ func (mediaStore *Store) GenerateName(stream io.Reader) string {
 	dataSize := 0
 	for {
 		n, err := stream.Read(buf)
-		if err != nil && err != io.EOF {
-			panic(err)
+		if err != nil {
+			if err != io.EOF {
+				panic(err)
+			}
 		}
 		dataSize += n
-		hasher.Write(buf)
-		if err == io.EOF || n == 0 {
+		if _, err = hasher.Write(buf); err == io.EOF || n == 0 {
 			break
 		}
 	}
