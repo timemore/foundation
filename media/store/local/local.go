@@ -23,7 +23,7 @@ func init() {
 			NewService: NewService,
 			ServiceConfigSkeleton: func() mediastore.ServiceConfig {
 				cfg := ConfigSkeleton()
-				return cfg
+				return &cfg
 			},
 		})
 }
