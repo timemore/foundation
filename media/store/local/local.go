@@ -73,7 +73,8 @@ func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadIn
 		}
 		dataSize += n
 
-		if _, err := stream.Write(buf); err != nil || err == io.EOF {
+		_, _ = stream.Write(buf)
+		if err == io.EOF || n == 0 {
 			break
 		}
 	}
@@ -110,7 +111,8 @@ func (s *Service) GetObject(sourceKey string) (stream *bytes.Buffer, err error) 
 		}
 		dataSize += n
 
-		if _, err := stream.Write(buf); err != nil || err == io.EOF {
+		_, _ = stream.Write(buf)
+		if err == io.EOF || n == 0 {
 			break
 		}
 	}

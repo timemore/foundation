@@ -88,7 +88,8 @@ func (mediaStore *Store) GenerateName(stream io.Reader) string {
 			}
 		}
 		dataSize += n
-		if _, err = hasher.Write(buf); err == io.EOF || n == 0 {
+		hasher.Write(buf)
+		if err == io.EOF || n == 0 {
 			break
 		}
 	}
