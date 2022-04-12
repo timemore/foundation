@@ -8,6 +8,8 @@ import (
 )
 
 type Certificate struct {
+	der string
+
 	*x509.Certificate
 }
 
@@ -24,7 +26,10 @@ func ParseCertificate(certificate string) (*Certificate, error) {
 	if err != nil {
 		return nil, fmt.Errorf("failed to parse certificate: " + err.Error())
 	}
-	return &Certificate{cert}, nil
+	return &Certificate{
+		der:         certificate,
+		Certificate: cert,
+	}, nil
 }
 
 func stringBetween(str string, start string, end string) string {
@@ -64,7 +69,7 @@ func wordWrap(text string, lineWidth int) (wrapped string) {
 }
 
 func (c *Certificate) PEM() []byte {
-	return c.Raw
+	return []byte(c.der)
 }
 
 func (c *Certificate) Algorithm() x509.PublicKeyAlgorithm {
