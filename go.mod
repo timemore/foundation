@@ -5,7 +5,7 @@ go 1.17
 require (
 	cloud.google.com/go/storage v1.22.0
 	github.com/archdx/zerolog-sentry v0.0.2
-	github.com/aws/aws-sdk-go v1.43.39
+	github.com/aws/aws-sdk-go v1.44.24
 	github.com/emicklei/go-restful/v3 v3.7.4
 	github.com/gabriel-vasile/mimetype v1.4.0
 	github.com/google/uuid v1.3.0
