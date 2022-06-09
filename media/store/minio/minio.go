@@ -3,6 +3,7 @@ package minio
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io"
 	"net/url"
 	"path"
@@ -61,14 +62,14 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	}
 
 	// 	Initialize minio client object
-	cred := credentials.NewStaticV4(
-		conf.AccessKeyID,
-		conf.SecretAccessKey,
-		"",
-	)
-	minioClient, err := minio.New(conf.Endpoint, &minio.Options{
-		Creds:  cred,
-		Secure: conf.UseSSL})
+	accessKeyID := conf.AccessKeyID
+	endpoint := conf.Endpoint
+	secretAccessKey := conf.SecretAccessKey
+	useSSL := conf.UseSSL
+
+	minioClient, err := minio.New(endpoint, &minio.Options{
+		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+		Secure: useSSL})
 
 	if err != nil {
 		return nil, errors.Wrap("minio client initialization", err)
@@ -103,7 +104,6 @@ type Service struct {
 }
 
 func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
-	ctx := context.Background()
 	bucketName := s.bucketName
 	if s.basePath != "" {
 		targetKey = path.Join(s.basePath, targetKey)
@@ -117,10 +117,12 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 			objectSize = written
 		}
 	}
+	fmt.Printf("object size: %d\r\n", objectSize)
 	contentType := media.DetectType(buff.Bytes())
-	info, err := s.minioClient.PutObject(ctx, bucketName, targetKey, contentSource, objectSize, minio.PutObjectOptions{
+	opts := minio.PutObjectOptions{
 		ContentType: contentType,
-	})
+	}
+	info, err := s.minioClient.PutObject(context.Background(), bucketName, targetKey, contentSource, -1, opts)
 	if err != nil {
 		return nil, errors.Wrap("upload", err)
 	}
