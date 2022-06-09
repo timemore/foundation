@@ -110,7 +110,17 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 	}
 
 	targetKey = path.Clean(targetKey)
-	info, err := s.minioClient.PutObject(ctx, bucketName, targetKey, contentSource, -1, minio.PutObjectOptions{})
+	buff := &bytes.Buffer{}
+	var objectSize int64 = -1
+	if written, err := io.Copy(buff, contentSource); err == nil {
+		if objectSize != 0 {
+			objectSize = written
+		}
+	}
+	contentType := media.DetectType(buff.Bytes())
+	info, err := s.minioClient.PutObject(ctx, bucketName, targetKey, contentSource, objectSize, minio.PutObjectOptions{
+		ContentType: contentType,
+	})
 	if err != nil {
 		return nil, errors.Wrap("upload", err)
 	}
