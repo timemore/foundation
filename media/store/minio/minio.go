@@ -24,6 +24,7 @@ type Config struct {
 	SecretAccessKey string `env:"SECRET_ACCESS_KEY,required"`
 	Endpoint        string `env:"ENDPOINT,required"`
 	UseSSL          bool   `env:"USE_SSL"`
+	BucketOperation bool   `env:"BUCKET_OPERATION"`
 }
 
 const ServiceName = "minio"
@@ -60,8 +61,7 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	}
 
 	// 	Initialize minio client object
-	var cred *credentials.Credentials
-	cred = credentials.NewStaticV4(
+	cred := credentials.NewStaticV4(
 		conf.AccessKeyID,
 		conf.SecretAccessKey,
 		"",
@@ -76,14 +76,16 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 
 	// 	make bucket
 	bucketName := conf.BucketName
-	location := conf.Region
 	basepath := conf.BasePath
-	err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
-	if err != nil {
-		// Check to see if we already own this bucket (which happens if you run this twice)
-		exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
-		if errBucketExists != nil && !exists {
-			return nil, errors.Wrap("bucket creation", err)
+	if conf.BucketOperation {
+		location := conf.Region
+		err = minioClient.MakeBucket(ctx, bucketName, minio.MakeBucketOptions{Region: location})
+		if err != nil {
+			// Check to see if we already own this bucket (which happens if you run this twice)
+			exists, errBucketExists := minioClient.BucketExists(ctx, bucketName)
+			if errBucketExists != nil && !exists {
+				return nil, errors.Wrap("bucket creation", err)
+			}
 		}
 	}
 
