@@ -3,7 +3,6 @@ package minio
 import (
 	"bytes"
 	"context"
-	"fmt"
 	"io"
 	"net/url"
 	"path"
@@ -117,7 +116,7 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 			objectSize = written
 		}
 	}
-	fmt.Printf("object size: %d\r\n", objectSize)
+
 	contentType := media.DetectType(buff.Bytes())
 	opts := minio.PutObjectOptions{
 		ContentType: contentType,
