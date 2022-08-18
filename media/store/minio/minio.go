@@ -121,7 +121,7 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 	opts := minio.PutObjectOptions{
 		ContentType: contentType,
 	}
-	info, err := s.minioClient.PutObject(context.Background(), bucketName, targetKey, contentSource, -1, opts)
+	info, err := s.minioClient.PutObject(context.Background(), bucketName, targetKey, buff, objectSize, opts)
 	if err != nil {
 		return nil, errors.Wrap("upload", err)
 	}
