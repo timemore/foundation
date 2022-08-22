@@ -5,7 +5,7 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"regexp"
 	"strings"
@@ -46,58 +46,62 @@ func NewRequestLoggingFilter(db *sqlx.DB) *LogFilter {
 
 func (lf *LogFilter) Filter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
 	startTime := lf.clock.Now().UTC()
-	inBody, err := ioutil.ReadAll(req.Request.Body)
+	inBody, err := io.ReadAll(req.Request.Body)
 	if err != nil {
-		panic(err)
+		if err != io.EOF && err != io.ErrUnexpectedEOF {
+			panic(err)
+		}
 	}
-	req.Request.Body = ioutil.NopCloser(bytes.NewReader(inBody))
+	req.Request.Body = io.NopCloser(bytes.NewReader(inBody))
 	c := NewResponseCapture(resp.ResponseWriter)
 	resp.ResponseWriter = c
 	chain.ProcessFilter(req, resp)
 	latency := lf.clock.Since(startTime)
-	if err := lf.db.Ping(); err != nil {
-		panic(err)
-	}
-	// ignore error, just log
-	dbDriverName := lf.db.DriverName()
-	switch dbDriverName {
-	case "postgres", "postgresql", "pg":
-		ipAddr := realip.FromRequest(req.Request)
-		if ipAddr == "" {
-			ipAddr = req.Request.RemoteAddr
-		}
-		bodyLog := LoggerBody{}
-		var mapPayload propertyMap
-		if err := json.Unmarshal(inBody, &mapPayload); err == nil {
-			lf.mapFilter(mapPayload)
-			bodyLog.Request = mapPayload
-		}
-
-		var mapResponse propertyMap
-		if err := json.Unmarshal(c.Bytes(), &mapResponse); err == nil {
-			lf.mapFilter(mapResponse)
-			bodyLog.Response = mapResponse
-		}
-
-		reqHeader := req.Request.Header
-		if bHeader, err := json.Marshal(reqHeader); err == nil {
-			var mapHeader propertyMap
-			_ = json.Unmarshal(bHeader, &mapHeader)
-			lf.mapFilter(mapHeader)
-			bodyLog.Header = mapHeader
-		}
-
-		inBodyLog, err := json.Marshal(&bodyLog)
-		if err != nil {
+	if lf.db != nil {
+		if err := lf.db.Ping(); err != nil {
 			panic(err)
 		}
-		var requestLogBodyRequest propertyMap
-		_ = json.Unmarshal(inBodyLog, &requestLogBodyRequest)
-		tNow := time.Now().UTC()
-		_ = lf.db.MustExec(`INSERT INTO logs `+
-			`(method, status_code, uri, referer, user_agent, ip_address, latency, body, created_at, updated_at) VALUES `+
-			`($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)`,
-			req.Request.Method, resp.StatusCode(), req.Request.RequestURI, req.Request.Referer(), ipAddr, req.Request.UserAgent(), latency.Nanoseconds(), requestLogBodyRequest, tNow)
+		// ignore error, just log
+		dbDriverName := lf.db.DriverName()
+		switch dbDriverName {
+		case "postgres", "postgresql", "pg":
+			ipAddr := realip.FromRequest(req.Request)
+			if ipAddr == "" {
+				ipAddr = req.Request.RemoteAddr
+			}
+			bodyLog := LoggerBody{}
+			var mapPayload propertyMap
+			if err := json.Unmarshal(inBody, &mapPayload); err == nil {
+				lf.mapFilter(mapPayload)
+				bodyLog.Request = mapPayload
+			}
+
+			var mapResponse propertyMap
+			if err := json.Unmarshal(c.Bytes(), &mapResponse); err == nil {
+				lf.mapFilter(mapResponse)
+				bodyLog.Response = mapResponse
+			}
+
+			reqHeader := req.Request.Header
+			if bHeader, err := json.Marshal(reqHeader); err == nil {
+				var mapHeader propertyMap
+				_ = json.Unmarshal(bHeader, &mapHeader)
+				lf.mapFilter(mapHeader)
+				bodyLog.Header = mapHeader
+			}
+
+			inBodyLog, err := json.Marshal(&bodyLog)
+			if err != nil {
+				panic(err)
+			}
+			var requestLogBodyRequest propertyMap
+			_ = json.Unmarshal(inBodyLog, &requestLogBodyRequest)
+			tNow := time.Now().UTC()
+			_ = lf.db.MustExec(`INSERT INTO logs `+
+				`(method, status_code, uri, referer, user_agent, ip_address, latency, body, created_at, updated_at) VALUES `+
+				`($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)`,
+				req.Request.Method, resp.StatusCode(), req.Request.RequestURI, req.Request.Referer(), ipAddr, req.Request.UserAgent(), latency.Nanoseconds(), requestLogBodyRequest, tNow)
+		}
 	}
 }
 
@@ -265,11 +269,13 @@ func inArray(str string, haystacks []string) bool {
 
 func (lf *LogFilter) parseArray(anArray []interface{}) {
 	for _, val := range anArray {
-		switch val.(type) {
+		switch t := val.(type) {
 		case map[string]interface{}:
 			lf.mapFilter(val.(map[string]interface{}))
 		case []interface{}:
 			lf.parseArray(val.([]interface{}))
+		default:
+			println(t)
 		}
 	}
 }
