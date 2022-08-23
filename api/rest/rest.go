@@ -2,7 +2,10 @@ package rest
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"net/http"
+	"reflect"
 )
 
 type ErrorResponse struct {
@@ -68,4 +71,46 @@ func (r Responder) SuccessWithHTTPStatusCode(successData interface{}, httpStatus
 	if err != nil {
 		panic(err)
 	}
+}
+
+type LogServiceServer interface {
+	LogRequest(statusCode int, message string, endPoint string, method string, ipAddr string, referer string, userAgent string, latency int64, data json.RawMessage) error
+}
+
+func unmarshalSingle(data map[string]interface{}, name string, out interface{}) error {
+	t := reflect.TypeOf(out)
+	if t.Kind() != reflect.Ptr {
+		return errors.New("output must be a pointer")
+	}
+	val, found := data[name]
+	if !found {
+		return fmt.Errorf("%s not found in map, contents: %v", name, data)
+	}
+
+	o := reflect.ValueOf(out).Elem()
+
+	switch out.(type) {
+	case *int:
+		v, ok := val.(float64)
+		if !ok {
+			return fmt.Errorf("cannot assert %s to an integer via float, value: %v", name, val)
+		}
+		o.Set(reflect.ValueOf(int(v)))
+	case *string:
+		v, ok := val.(string)
+		if !ok {
+			return fmt.Errorf("cannot assert %s to a string, value: %v", name, val)
+		}
+		o.Set(reflect.ValueOf(v))
+	case *bool:
+		v, ok := val.(bool)
+		if !ok {
+			return fmt.Errorf("cannot assert %s to a bool, value: %v", name, val)
+		}
+		o.Set(reflect.ValueOf(v))
+	default:
+		return fmt.Errorf("%s is not an int, string, or bool, value: %v", name, val)
+	}
+
+	return nil
 }

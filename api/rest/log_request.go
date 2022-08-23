@@ -5,21 +5,24 @@ import (
 	"database/sql/driver"
 	"encoding/json"
 	"errors"
+	"html/template"
 	"io"
+	"log"
 	"net/http"
+	"os"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
 	"github.com/emicklei/go-restful/v3"
-	"github.com/jmoiron/sqlx"
 	"github.com/nyaruka/phonenumbers"
 	"github.com/tomasen/realip"
 )
 
 type LogFilter struct {
-	db    *sqlx.DB
 	clock timer
+	srv   LogServiceServer
 }
 
 type timer interface {
@@ -37,72 +40,141 @@ func (rc *realClock) Since(t time.Time) time.Duration {
 	return time.Since(t)
 }
 
-func NewRequestLoggingFilter(db *sqlx.DB) *LogFilter {
+// LoggerDefaultFormat is the format logged used by the default Logger instance.
+var LoggerDefaultFormat = "{{ .Timestamp.Format \"02/01/06 15:04:05 MST\" }} {{.Status}} | ({{.IPAddr}}) {{.Hostname}} | {{.Method}} {{.Path}} {{if .Message}}:: {{.Message}}{{end}}"
+var logRequestPrintTemplate *template.Template
+
+func NewRequestLoggingFilter(logSrv LogServiceServer) *LogFilter {
+	logRequestPrintTemplate = template.Must(template.New("rest-logger").Parse(LoggerDefaultFormat))
 	return &LogFilter{
-		db:    db,
 		clock: &realClock{},
+		srv:   logSrv,
 	}
 }
 
 func (lf *LogFilter) Filter(req *restful.Request, resp *restful.Response, chain *restful.FilterChain) {
-	startTime := lf.clock.Now().UTC()
-	inBody, err := io.ReadAll(req.Request.Body)
-	if err != nil {
-		if err != io.EOF && err != io.ErrUnexpectedEOF {
-			panic(err)
+	var logReq bool
+	logRequestStr, found := os.LookupEnv("LOG_REQUEST")
+	if found {
+		if strings.TrimSpace(logRequestStr) != "" {
+			if val, err := strconv.ParseBool(strings.TrimSpace(logRequestStr)); err == nil {
+				logReq = val
+			}
 		}
 	}
-	req.Request.Body = io.NopCloser(bytes.NewReader(inBody))
-	c := NewResponseCapture(resp.ResponseWriter)
-	resp.ResponseWriter = c
-	chain.ProcessFilter(req, resp)
-	latency := lf.clock.Since(startTime)
-	if lf.db != nil {
-		if err := lf.db.Ping(); err != nil {
-			panic(err)
-		}
-		// ignore error, just log
-		dbDriverName := lf.db.DriverName()
-		switch dbDriverName {
-		case "postgres", "postgresql", "pg":
-			ipAddr := realip.FromRequest(req.Request)
-			if ipAddr == "" {
-				ipAddr = req.Request.RemoteAddr
-			}
-			bodyLog := LoggerBody{}
-			var mapPayload propertyMap
-			if err := json.Unmarshal(inBody, &mapPayload); err == nil {
-				lf.mapFilter(mapPayload)
-				bodyLog.Request = mapPayload
-			}
-
-			var mapResponse propertyMap
-			if err := json.Unmarshal(c.Bytes(), &mapResponse); err == nil {
-				lf.mapFilter(mapResponse)
-				bodyLog.Response = mapResponse
-			}
-
-			reqHeader := req.Request.Header
-			if bHeader, err := json.Marshal(reqHeader); err == nil {
-				var mapHeader propertyMap
-				_ = json.Unmarshal(bHeader, &mapHeader)
-				lf.mapFilter(mapHeader)
-				bodyLog.Header = mapHeader
-			}
-
-			inBodyLog, err := json.Marshal(&bodyLog)
-			if err != nil {
+	if !logReq {
+		chain.ProcessFilter(req, resp)
+	} else {
+		tNow := lf.clock.Now()
+		httpRequest := req.Request
+		startTime := tNow.UTC()
+		inBody, err := io.ReadAll(httpRequest.Body)
+		if err != nil {
+			if err != io.EOF && err != io.ErrUnexpectedEOF {
 				panic(err)
 			}
-			var requestLogBodyRequest propertyMap
-			_ = json.Unmarshal(inBodyLog, &requestLogBodyRequest)
-			tNow := time.Now().UTC()
-			_ = lf.db.MustExec(`INSERT INTO logs `+
-				`(method, status_code, uri, referer, user_agent, ip_address, latency, body, created_at, updated_at) VALUES `+
-				`($1, $2, $3, $4, $5, $6, $7, $8, $9, $9)`,
-				req.Request.Method, resp.StatusCode(), req.Request.RequestURI, req.Request.Referer(), ipAddr, req.Request.UserAgent(), latency.Nanoseconds(), requestLogBodyRequest, tNow)
 		}
+		requestBody := bytes.NewReader(inBody)
+		req.Request.Body = io.NopCloser(requestBody)
+		c := NewResponseCapture(resp.ResponseWriter)
+		resp.ResponseWriter = c
+		chain.ProcessFilter(req, resp)
+
+		latency := lf.clock.Since(startTime)
+		ipAddr := realip.FromRequest(httpRequest)
+		if ipAddr == "" {
+			ipAddr = req.Request.RemoteAddr
+		}
+
+		var urlStr string
+		if req.Request.URL != nil {
+			urlStr = req.Request.URL.String()
+		}
+		var jsonRequest, jsonHeader, jsonResponse propertyMap
+		bHeader, _ := json.Marshal(httpRequest.Header)
+		if err := json.Unmarshal(bHeader, &jsonHeader); err == nil {
+			lf.mapFilter(jsonHeader)
+		}
+
+		if ct := req.HeaderParameter("Content-Type"); ct == restful.MIME_JSON {
+			if err := json.Unmarshal(inBody, &jsonRequest); err == nil {
+				lf.mapFilter(jsonRequest)
+			}
+		}
+
+		var respMessage string
+		if c.Bytes() != nil {
+			if ct := c.Header().Get("Content-Type"); ct == "application/json" {
+				if err := json.Unmarshal(c.Bytes(), &jsonResponse); err == nil {
+					lf.mapFilter(jsonResponse)
+					_ = unmarshalSingle(jsonResponse, "message", &respMessage)
+				}
+			}
+		}
+
+		inBodyLog := struct {
+			Header   propertyMap `json:"header,omitempty"`
+			Request  propertyMap `json:"request,omitempty"`
+			Response propertyMap `json:"response,omitempty"`
+		}{
+			Header:   jsonHeader,
+			Request:  jsonRequest,
+			Response: jsonResponse,
+		}
+
+		bLogBody, _ := json.Marshal(&inBodyLog)
+		if c.status < 200 || c.status >= 300 {
+			b := &bytes.Buffer{}
+			logEntry := struct {
+				Timestamp time.Time
+				Status    int
+				IPAddr    string
+				Hostname  string
+				Method    string
+				Path      string
+				Message   string
+				Latency   int64
+			}{
+				Timestamp: tNow,
+				Status:    c.status,
+				IPAddr:    ipAddr,
+				Hostname:  req.Request.Host,
+				Method:    req.Request.Method,
+				Path:      req.Request.RequestURI,
+				Latency:   latency.Microseconds(),
+				Message:   respMessage,
+			}
+			_ = logRequestPrintTemplate.Execute(b, logEntry)
+
+			if reqURI := req.Request.RequestURI; len(reqURI) > 1 && reqURI != "/" {
+				switch statusCode := c.status; {
+				case statusCode >= 400 && statusCode < 500:
+					switch statusCode {
+					case 401, 403:
+						log.Printf("%s (%s)", b.String(), "The client does not have access rights to the content")
+					case 404:
+						log.Printf("%s (%s)", b.String(), "The server can not find the requested resource")
+					case 429:
+						log.Printf("%s (%s)", b.String(), "The user has sent too many requests in a given amount of time")
+					}
+				case statusCode >= 500 && statusCode < 600:
+					log.Printf("%s (%s)", b.String(), "The server has encountered a situation")
+				}
+			}
+		}
+		_ = lf.srv.LogRequest(
+			c.StatusCode(),
+			respMessage,
+			urlStr,
+			req.Request.Method,
+			ipAddr,
+			req.Request.Referer(),
+			req.Request.UserAgent(),
+			latency.Milliseconds(),
+			bLogBody,
+		)
 	}
+
 }
 
 type propertyMap map[string]interface{}
