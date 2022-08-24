@@ -41,7 +41,7 @@ func (rc *realClock) Since(t time.Time) time.Duration {
 }
 
 // LoggerDefaultFormat is the format logged used by the default Logger instance.
-var LoggerDefaultFormat = "{{ .Timestamp.Format \"02/01/06 15:04:05 MST\" }} {{.Status}} | ({{.IPAddr}}) {{.Hostname}} | {{.Method}} {{.Path}} {{if .Message}}:: {{.Message}}{{end}}"
+var LoggerDefaultFormat = "{{.Status}} | ({{.IPAddr}}) {{.Hostname}} | {{.Method}} {{.Path}} {{if .Message}}:: {{.Message}}{{end}}"
 var logRequestPrintTemplate *template.Template
 
 func NewRequestLoggingFilter(logSrv LogServiceServer) *LogFilter {
@@ -126,23 +126,21 @@ func (lf *LogFilter) Filter(req *restful.Request, resp *restful.Response, chain 
 		if c.status < 200 || c.status >= 300 {
 			b := &bytes.Buffer{}
 			logEntry := struct {
-				Timestamp time.Time
-				Status    int
-				IPAddr    string
-				Hostname  string
-				Method    string
-				Path      string
-				Message   string
-				Latency   int64
+				Status   int
+				IPAddr   string
+				Hostname string
+				Method   string
+				Path     string
+				Message  string
+				Latency  int64
 			}{
-				Timestamp: tNow,
-				Status:    c.status,
-				IPAddr:    ipAddr,
-				Hostname:  req.Request.Host,
-				Method:    req.Request.Method,
-				Path:      req.Request.RequestURI,
-				Latency:   latency.Microseconds(),
-				Message:   respMessage,
+				Status:   c.status,
+				IPAddr:   ipAddr,
+				Hostname: req.Request.Host,
+				Method:   req.Request.Method,
+				Path:     req.Request.RequestURI,
+				Latency:  latency.Microseconds(),
+				Message:  respMessage,
 			}
 			_ = logRequestPrintTemplate.Execute(b, logEntry)
 
@@ -341,13 +339,11 @@ func inArray(str string, haystacks []string) bool {
 
 func (lf *LogFilter) parseArray(anArray []interface{}) {
 	for _, val := range anArray {
-		switch t := val.(type) {
-		case map[string]interface{}:
-			lf.mapFilter(val.(map[string]interface{}))
-		case []interface{}:
-			lf.parseArray(val.([]interface{}))
-		default:
-			println(t)
+		if data, ok := val.(map[string]interface{}); ok {
+			lf.mapFilter(data)
+		}
+		if data, ok := val.([]interface{}); ok {
+			lf.parseArray(data)
 		}
 	}
 }
