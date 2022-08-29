@@ -14,7 +14,7 @@ require (
 	github.com/minio/minio-go/v7 v7.0.34
 	github.com/nyaruka/phonenumbers v1.1.0
 	github.com/rez-go/stev v0.0.0-20220607035830-a584f4607939
-	github.com/rs/zerolog v1.27.0
+	github.com/rs/zerolog v1.28.0
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8
