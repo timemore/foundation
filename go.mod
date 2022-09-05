@@ -3,7 +3,7 @@ module github.com/timemore/foundation
 go 1.17
 
 require (
-	cloud.google.com/go/storage v1.25.0
+	cloud.google.com/go/storage v1.26.0
 	github.com/archdx/zerolog-sentry v1.0.1
 	github.com/aws/aws-sdk-go v1.44.81
 	github.com/emicklei/go-restful/v3 v3.9.0
@@ -18,7 +18,7 @@ require (
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	golang.org/x/crypto v0.0.0-20220817201139-bc19a97f63c8
-	google.golang.org/api v0.93.0
+	google.golang.org/api v0.94.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
@@ -49,7 +49,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	golang.org/x/net v0.0.0-20220812174116-3211cb980234 // indirect
-	golang.org/x/oauth2 v0.0.0-20220808172628-8227340efae7 // indirect
+	golang.org/x/oauth2 v0.0.0-20220822191816-0ebed06d0094 // indirect
 	golang.org/x/sys v0.0.0-20220818161305-2296e01440c6 // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220609144429-65e65417b02f // indirect
