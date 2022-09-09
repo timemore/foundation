@@ -1,5 +1,7 @@
 package media
 
+import "github.com/gabriel-vasile/mimetype"
+
 var imageAllowedContentTypes = []string{
 	"image/jpg",
 	"image/jpeg",
@@ -33,4 +35,8 @@ func (typeInfo *imageMediaTypeInfo) IsContentTypeAllowed(contentType string) boo
 		}
 	}
 	return false
+}
+
+func (typeInfo *imageMediaTypeInfo) DetectReader(r Reader) (*mimetype.MIME, error) {
+	return mimetype.DetectReader(r)
 }

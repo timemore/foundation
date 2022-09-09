@@ -1,6 +1,10 @@
 package media
 
-import "io"
+import (
+	"io"
+
+	"github.com/gabriel-vasile/mimetype"
+)
 
 var fileAllowedContentTypes = []string{
 	"application/msword",
@@ -43,4 +47,8 @@ func (typeInfo *fileMediaTypeInfo) IsContentTypeAllowed(contentType string) bool
 		}
 	}
 	return false
+}
+
+func (typeInfo *fileMediaTypeInfo) DetectReader(r Reader) (*mimetype.MIME, error) {
+	return mimetype.DetectReader(r)
 }

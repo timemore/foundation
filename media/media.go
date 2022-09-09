@@ -15,6 +15,11 @@ func DetectExtension(buf []byte) string {
 	return mimetype.Detect(buf).Extension()
 }
 
+func DetectMime(stream Reader) {
+	mimetype.SetLimit(0)
+	mimetype.DetectReader(stream)
+}
+
 func IsAllowedContentType(contentType string, allowedContentType []string) bool {
 	if len(allowedContentType) != 0 {
 		for _, ct := range allowedContentType {
@@ -36,6 +41,10 @@ type MediaTypeInfo interface {
 
 	// IsContentTypeAllowed returns true if the provided content type string is allowed for the media type
 	IsContentTypeAllowed(contentType string) bool
+
+	// MimeType returns mimetype.MIME wich is mimetype info of the document,
+	// accept Reader as input, read whole file instead of partial byte of the Reader
+	DetectReader(r Reader) (*mimetype.MIME, error)
 }
 
 var mediaTypeRegistry = map[MediaType]MediaTypeInfo{
