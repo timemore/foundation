@@ -50,5 +50,7 @@ func (typeInfo *fileMediaTypeInfo) IsContentTypeAllowed(contentType string) bool
 }
 
 func (typeInfo *fileMediaTypeInfo) DetectReader(r Reader) (*mimetype.MIME, error) {
+	// Some file formats (often Microsoft Office documents) keep their signatures towards the end of the file.
+	mimetype.SetLimit(0) // No limit, whole file content used.
 	return mimetype.DetectReader(r)
 }

@@ -15,9 +15,9 @@ func DetectExtension(buf []byte) string {
 	return mimetype.Detect(buf).Extension()
 }
 
-func DetectMime(stream Reader) {
+func DetectMime(stream Reader) (*mimetype.MIME, error) {
 	mimetype.SetLimit(0)
-	mimetype.DetectReader(stream)
+	return mimetype.DetectReader(stream)
 }
 
 func IsAllowedContentType(contentType string, allowedContentType []string) bool {
