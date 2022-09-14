@@ -3,16 +3,25 @@ package media
 import (
 	"io"
 	"strings"
+	"sync/atomic"
 
 	"github.com/gabriel-vasile/mimetype"
 )
 
+var mimeReadLimit uint32 = 0
+
+func SetMimeReadLimit(n uint32) {
+	atomic.StoreUint32(&mimeReadLimit, n)
+}
+
 func DetectType(buf []byte) string {
 	// Detect always returns valid MIME.
+	mimetype.SetLimit(mimeReadLimit)
 	return mimetype.Detect(buf).String()
 }
 
 func DetectExtension(buf []byte) string {
+	mimetype.SetLimit(0)
 	return mimetype.Detect(buf).Extension()
 }
 
