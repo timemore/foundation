@@ -1,6 +1,7 @@
 package media
 
 import (
+	"io"
 	"strings"
 
 	"github.com/gabriel-vasile/mimetype"
@@ -15,7 +16,7 @@ func DetectExtension(buf []byte) string {
 	return mimetype.Detect(buf).Extension()
 }
 
-func DetectMime(stream Reader) (*mimetype.MIME, error) {
+func DetectMime(stream io.Reader) (*mimetype.MIME, error) {
 	mimetype.SetLimit(0)
 	return mimetype.DetectReader(stream)
 }
@@ -44,7 +45,7 @@ type MediaTypeInfo interface {
 
 	// MimeType returns mimetype.MIME wich is mimetype info of the document,
 	// accept Reader as input, read whole file instead of partial byte of the Reader
-	DetectReader(r Reader) (*mimetype.MIME, error)
+	DetectReader(r io.Reader) (*mimetype.MIME, error)
 }
 
 var mediaTypeRegistry = map[MediaType]MediaTypeInfo{
