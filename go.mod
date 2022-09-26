@@ -3,7 +3,7 @@ module github.com/timemore/foundation
 go 1.19
 
 require (
-	cloud.google.com/go/storage v1.26.0
+	cloud.google.com/go/storage v1.27.0
 	github.com/archdx/zerolog-sentry v1.0.1
 	github.com/aws/aws-sdk-go v1.44.97
 	github.com/emicklei/go-restful/v3 v3.9.0
@@ -18,7 +18,7 @@ require (
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
-	google.golang.org/api v0.95.0
+	google.golang.org/api v0.97.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
@@ -54,7 +54,7 @@ require (
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
-	google.golang.org/genproto v0.0.0-20220913154956-18f8339a66a5 // indirect
+	google.golang.org/genproto v0.0.0-20220920201722-2b89144ce006 // indirect
 	google.golang.org/grpc v1.49.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
