@@ -18,7 +18,7 @@ require (
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
 	github.com/tomasen/realip v0.0.0-20180522021738-f0c99a92ddce
 	golang.org/x/crypto v0.0.0-20220829220503-c86fa9a7ed90
-	google.golang.org/api v0.95.0
+	google.golang.org/api v0.98.0
 	gopkg.in/natefinch/lumberjack.v2 v2.0.0
 )
 
