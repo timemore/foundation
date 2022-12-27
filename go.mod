@@ -13,7 +13,7 @@ require (
 	github.com/gorilla/schema v1.2.0
 	github.com/joho/godotenv v1.4.0
 	github.com/minio/minio-go/v7 v7.0.36
-	github.com/nyaruka/phonenumbers v1.1.1
+	github.com/nyaruka/phonenumbers v1.1.4
 	github.com/rez-go/stev v0.0.0-20220607035830-a584f4607939
 	github.com/rs/zerolog v1.28.0
 	github.com/thoas/stats v0.0.0-20190407194641-965cb2de1678
