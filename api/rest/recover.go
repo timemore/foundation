@@ -37,7 +37,7 @@ type RecoveryService interface {
 	Notify(msg any) (string, error)
 }
 
-func New(svc RecoveryService) *Recover {
+func NewRecoveryFilter(svc RecoveryService) *Recover {
 	initRec()
 	return &Recover{
 		PrintStack: true,
