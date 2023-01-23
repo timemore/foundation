@@ -5,7 +5,7 @@ go 1.19
 require (
 	cloud.google.com/go/storage v1.26.0
 	github.com/archdx/zerolog-sentry v1.0.1
-	github.com/aws/aws-sdk-go v1.44.97
+	github.com/aws/aws-sdk-go v1.44.184
 	github.com/eapache/go-resiliency v1.3.0
 	github.com/emicklei/go-restful/v3 v3.9.0
 	github.com/gabriel-vasile/mimetype v1.4.1
@@ -49,10 +49,10 @@ require (
 	github.com/rs/xid v1.4.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
-	golang.org/x/net v0.0.0-20220909164309-bea034e7d591 // indirect
+	golang.org/x/net v0.1.0 // indirect
 	golang.org/x/oauth2 v0.0.0-20220909003341-f21342109be1 // indirect
-	golang.org/x/sys v0.0.0-20220913175220-63ea55921009 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.1.0 // indirect
+	golang.org/x/text v0.4.0 // indirect
 	golang.org/x/xerrors v0.0.0-20220907171357-04be3eba64a2 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
 	google.golang.org/genproto v0.0.0-20220913154956-18f8339a66a5 // indirect
