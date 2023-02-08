@@ -2,13 +2,11 @@ package logger
 
 import (
 	"io"
-	stdlog "log"
 	"net/http"
 	"os"
 	"path"
 	"time"
 
-	zlogsentry "github.com/archdx/zerolog-sentry"
 	"github.com/rez-go/stev"
 	"github.com/rs/zerolog"
 	"github.com/tomasen/realip"
@@ -76,19 +74,6 @@ func newLoggerByEnv() Logger {
 			writers = append(writers, logFile)
 		}
 
-		if sentryDSN, found := os.LookupEnv(EnvPrefixDefault + "SENTRY_DSN"); found {
-			if sentryDSN != "" {
-				levelOptions := zlogsentry.WithLevels(zerolog.WarnLevel, zerolog.DebugLevel, zerolog.ErrorLevel, zerolog.FatalLevel, zerolog.PanicLevel)
-				w, err := zlogsentry.New(sentryDSN, levelOptions)
-				if err != nil {
-					stdlog.Fatal(err)
-				}
-				if w != nil {
-					writers = append(writers, w)
-				}
-				defer w.Close()
-			}
-		}
 		mw := zerolog.MultiLevelWriter(writers...)
 		logger = logger.Output(mw)
 	}
