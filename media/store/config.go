@@ -8,7 +8,7 @@ type Config struct {
 	NameGenerationKey string `env:"FILENAME_GENERATION_KEY"`
 	StoreService      string `env:"STORE_SERVICE"`
 
-	Modules map[string]interface{} `env:",map,squash"`
+	Modules map[string]any `env:",map,squash"`
 
 	ImagesBaseURL string `env:"IMAGES_BASE_URL"`
 }

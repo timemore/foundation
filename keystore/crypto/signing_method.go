@@ -7,8 +7,8 @@ var signingMethodMu = new(sync.RWMutex)
 
 // Implement SigningMethod to add new methods for signing or verifying signed string
 type SigningMethod interface {
-	Verify(signingString, signature string, key interface{}) error
-	Sign(signingString string, key interface{}) (string, error)
+	Verify(signingString, signature string, key any) error
+	Sign(signingString string, key any) (string, error)
 	Alg() string
 }
 

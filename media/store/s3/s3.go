@@ -86,7 +86,7 @@ type Service struct {
 	downloader *s3manager.Downloader
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo any, err error) {
 	result, err := s.uploader.Upload(&s3manager.UploadInput{
 		Body:   contentSource,
 		Bucket: aws.String(s.bucketName),

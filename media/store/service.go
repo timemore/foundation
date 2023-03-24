@@ -5,10 +5,10 @@ import (
 	"io"
 )
 
-type ServiceConfig interface{}
+type ServiceConfig any
 
 type Service interface {
-	PutObject(objectKey string, content io.Reader) (uploadInfo interface{}, err error)
+	PutObject(objectKey string, content io.Reader) (uploadInfo any, err error)
 	GetObject(objectKey string) (stream *bytes.Buffer, err error)
 	GetPublicObject(objectKey string) (string, error)
 }

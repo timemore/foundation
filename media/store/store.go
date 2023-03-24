@@ -45,7 +45,7 @@ func New(config Config) (*Store, error) {
 	}, nil
 }
 
-func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, mediaType media.MediaType) (uploadInfo interface{}, err error) {
+func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, mediaType media.MediaType) (uploadInfo any, err error) {
 	uploadInfo, err = mediaStore.serviceClient.PutObject(mediaName, contentSource)
 	if err != nil {
 		return "", errors.Wrap("putting object", err)

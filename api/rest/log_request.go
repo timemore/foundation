@@ -175,26 +175,26 @@ func (lf *LogFilter) Filter(req *restful.Request, resp *restful.Response, chain 
 
 }
 
-type propertyMap map[string]interface{}
+type propertyMap map[string]any
 
 func (p propertyMap) Value() (driver.Value, error) {
 	j, err := json.Marshal(p)
 	return j, err
 }
 
-func (p *propertyMap) Scan(src interface{}) error {
+func (p *propertyMap) Scan(src any) error {
 	source, ok := src.([]byte)
 	if !ok {
 		return errors.New("type assertion .([]byte) failed")
 	}
 
-	var i interface{}
+	var i any
 	err := json.Unmarshal(source, &i)
 	if err != nil {
 		return err
 	}
 
-	*p, ok = i.(map[string]interface{})
+	*p, ok = i.(map[string]any)
 	if !ok {
 		return errors.New("type assertion .(map[string]interface{}) failed")
 	}
@@ -278,17 +278,17 @@ var (
 
 var SafeFields = []string{"authorization", "api-key", "api", "apikey", "merchant-key", "enterprise-token", "token", "user-token"}
 
-func (lf *LogFilter) mapFilter(aMap map[string]interface{}) {
+func (lf *LogFilter) mapFilter(aMap map[string]any) {
 	for key, val := range aMap {
 		if inArray(strings.ToLower(key), SafeFields) {
 			delete(aMap, key)
 		}
 		switch concreteVal := val.(type) {
-		case map[string]interface{}:
-			lf.mapFilter(val.(map[string]interface{}))
+		case map[string]any:
+			lf.mapFilter(val.(map[string]any))
 
-		case []interface{}:
-			lf.parseArray(val.([]interface{}))
+		case []any:
+			lf.parseArray(val.([]any))
 
 		default:
 			// todo: sanitize data
@@ -337,12 +337,12 @@ func inArray(str string, haystacks []string) bool {
 	return false
 }
 
-func (lf *LogFilter) parseArray(anArray []interface{}) {
+func (lf *LogFilter) parseArray(anArray []any) {
 	for _, val := range anArray {
-		if data, ok := val.(map[string]interface{}); ok {
+		if data, ok := val.(map[string]any); ok {
 			lf.mapFilter(data)
 		}
-		if data, ok := val.([]interface{}); ok {
+		if data, ok := val.([]any); ok {
 			lf.parseArray(data)
 		}
 	}

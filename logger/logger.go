@@ -13,7 +13,7 @@ import (
 	"gopkg.in/natefinch/lumberjack.v2"
 )
 
-type Fields map[string]interface{}
+type Fields map[string]any
 
 type (
 	Logger = zerolog.Logger

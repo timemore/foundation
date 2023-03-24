@@ -88,7 +88,7 @@ func (m *SigningMethodRSAPSS) Alg() string {
 
 // Implements the Sign method from SigningMethod
 // For this signing method, key must be an rsa.PrivateKey struct
-func (m *SigningMethodRSAPSS) Sign(text string, key interface{}) (string, error) {
+func (m *SigningMethodRSAPSS) Sign(text string, key any) (string, error) {
 	// Get private key
 	var rsaKey *rsa.PrivateKey
 	var ok bool
@@ -114,7 +114,7 @@ func (m *SigningMethodRSAPSS) Sign(text string, key interface{}) (string, error)
 
 // Implements the Verify method from SigningMethod
 // For this verify method, key must be an rsa.PublicKey struct
-func (m *SigningMethodRSAPSS) Verify(signingString string, signature string, key interface{}) error {
+func (m *SigningMethodRSAPSS) Verify(signingString string, signature string, key any) error {
 	// Decode the signature
 	sig, err := base64.StdEncoding.DecodeString(signature)
 	if err != nil {

@@ -119,7 +119,7 @@ type UploadInfo struct {
 	Key    string
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo any, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*50)
 	defer cancel()
 	if s.basePath != "" {

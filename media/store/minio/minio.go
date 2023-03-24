@@ -102,7 +102,7 @@ type Service struct {
 	minioClient *minio.Client
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo any, err error) {
 	bucketName := s.bucketName
 	if s.basePath != "" {
 		targetKey = path.Join(s.basePath, targetKey)

@@ -183,7 +183,7 @@ func (r Responder) ErrorWithHTTPStatusCode(errorData ErrorResponse, httpStatusCo
 	}
 }
 
-func (r Responder) TokenCustom(tokenData interface{}) {
+func (r Responder) TokenCustom(tokenData any) {
 	r.w.Header().Set("Content-Type", "application/json")
 	r.w.WriteHeader(http.StatusOK)
 	err := json.NewEncoder(r.w).Encode(tokenData)
@@ -224,7 +224,7 @@ type AccessTokenRequest struct {
 	Password string `schema:"password"`
 }
 
-func QueryString(d interface{}) (queryString string, err error) {
+func QueryString(d any) (queryString string, err error) {
 	values := url.Values{}
 	err = schemaEncoder.Encode(d, values)
 	if err != nil {
@@ -233,7 +233,7 @@ func QueryString(d interface{}) (queryString string, err error) {
 	return values.Encode(), nil
 }
 
-func MustQueryString(d interface{}) string {
+func MustQueryString(d any) string {
 	s, err := QueryString(d)
 	if err != nil {
 		panic(err)

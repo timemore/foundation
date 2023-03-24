@@ -37,12 +37,15 @@ type Responder struct {
 
 func RespondTo(w http.ResponseWriter) Responder { return Responder{w} }
 
-func (r Responder) encodeToJSON(jsonData interface{}) error {
+func (r Responder) encodeToJSON(jsonData any) error {
 	return json.NewEncoder(r.w).Encode(jsonData)
 }
 
-func (r Responder) Error(errorData interface{}, httpStatusCode int) {
+func (r Responder) Error(errorData any, httpStatusCode int) {
 	r.w.Header().Set("Content-Type", "application/json")
+	if httpStatusCode == 0 {
+		httpStatusCode = 422
+	}
 	r.w.WriteHeader(httpStatusCode)
 	err := r.encodeToJSON(errorData)
 	if err != nil {
@@ -52,11 +55,14 @@ func (r Responder) Error(errorData interface{}, httpStatusCode int) {
 
 func (r Responder) EmptyError(httpStatusCode int) {
 	r.w.Header().Set("Content-Type", "application/json")
+	if httpStatusCode == 0 {
+		httpStatusCode = 422
+	}
 	r.w.WriteHeader(httpStatusCode)
 	_, _ = r.w.Write([]byte("{}"))
 }
 
-func (r Responder) Success(successData interface{}) {
+func (r Responder) Success(successData any) {
 	if successData == nil {
 		r.w.WriteHeader(http.StatusNoContent)
 		return
@@ -64,8 +70,11 @@ func (r Responder) Success(successData interface{}) {
 	r.SuccessWithHTTPStatusCode(successData, http.StatusOK)
 }
 
-func (r Responder) SuccessWithHTTPStatusCode(successData interface{}, httpStatusCode int) {
+func (r Responder) SuccessWithHTTPStatusCode(successData any, httpStatusCode int) {
 	r.w.Header().Set("Content-Type", "application/json")
+	if httpStatusCode == 0 {
+		httpStatusCode = http.StatusOK
+	}
 	r.w.WriteHeader(httpStatusCode)
 	err := r.encodeToJSON(successData)
 	if err != nil {
@@ -77,7 +86,7 @@ type LogServiceServer interface {
 	LogRequest(statusCode int, message string, endPoint string, method string, ipAddr string, referer string, userAgent string, latency int64, data json.RawMessage) error
 }
 
-func unmarshalSingle(data map[string]interface{}, name string, out interface{}) error {
+func unmarshalSingle(data map[string]any, name string, out any) error {
 	t := reflect.TypeOf(out)
 	if t.Kind() != reflect.Ptr {
 		return errors.New("output must be a pointer")

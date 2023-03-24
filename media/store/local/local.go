@@ -47,7 +47,7 @@ type Service struct {
 	directoryPath string
 }
 
-func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadInfo interface{}, err error) {
+func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadInfo any, err error) {
 	if s.directoryPath != "" {
 		targetName := filepath.Join(s.directoryPath, objectKey)
 		targetFile, err := os.Create(targetName)

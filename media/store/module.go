@@ -34,7 +34,7 @@ func ModuleNames() []string {
 
 func NewServiceClient(
 	serviceName string,
-	config interface{},
+	config any,
 ) (Service, error) {
 	if serviceName == "" {
 		return nil, nil
@@ -62,11 +62,11 @@ func RegisterModule(
 	modules[serviceName] = module
 }
 
-func ModuleConfigSkeletons() map[string]interface{} {
+func ModuleConfigSkeletons() map[string]any {
 	modulesMu.RLock()
 	defer modulesMu.RUnlock()
 
-	configs := map[string]interface{}{}
+	configs := map[string]any{}
 	for serviceName, mod := range modules {
 		if mod.ServiceConfigSkeleton != nil {
 			configs[serviceName] = mod.ServiceConfigSkeleton()
