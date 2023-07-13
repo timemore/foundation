@@ -14,11 +14,17 @@ type Config struct {
 }
 
 // ParseConfigFromEnv populate the configuration by looking up the environment variables.
-func ParseConfigFromEnv(prefix string) (*Config, error) {
-	cfg := Config{}
-	err := stev.LoadEnv(prefix, &cfg)
+func ParseConfigFromEnv(prefix string) (cfg Config, err error) {
+	cfg = ConfigSkeleton()
+	err = stev.LoadEnv(prefix, &cfg)
 	if err != nil {
-		return nil, err
+		return Config{}, err
 	}
-	return &cfg, nil
+	return cfg, nil
+}
+
+func ConfigSkeleton() Config {
+	return Config{
+		Modules: ModuleConfigSkeletons(),
+	}
 }

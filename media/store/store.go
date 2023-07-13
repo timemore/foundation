@@ -101,12 +101,6 @@ func (mediaStore *Store) GenerateName(stream io.Reader) string {
 	return encodedHash
 }
 
-func ConfigSkeleton() Config {
-	return Config{
-		Modules: ModuleConfigSkeletons(),
-	}
-}
-
 func ContentTypeInList(contentType string, contentTypeList []string) bool {
 	for _, ct := range contentTypeList {
 		if ct == contentType {
