@@ -4,6 +4,7 @@ import (
 	"crypto/x509"
 	"encoding/pem"
 	"fmt"
+	"regexp"
 	"strings"
 )
 
@@ -13,8 +14,14 @@ type Certificate struct {
 	*x509.Certificate
 }
 
+var (
+	reNewLine           = regexp.MustCompile(`(?m)\\n`)
+	substitutionNewLine = "\n"
+)
+
 // ParseCertificate parse raw data into x509.Certificate format
 func ParseCertificate(certificate string) (*Certificate, error) {
+	certificate = reNewLine.ReplaceAllString(certificate, substitutionNewLine)
 	certificate = stringBetween(certificate, "-----BEGIN CERTIFICATE-----", "-----END CERTIFICATE-----")
 	certificate = strings.TrimSpace(certificate)
 	certificate = "-----BEGIN CERTIFICATE-----\n" + wordWrap(certificate, 75) + "\n-----END CERTIFICATE-----"
