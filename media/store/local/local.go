@@ -11,7 +11,7 @@ import (
 )
 
 type Config struct {
-	DirectoryPath string `env:"FOLDER_PATH"`
+	DirectoryPath string `env:"FOLDER_PATH" yaml:"folder_path" json:"folder_path"`
 }
 
 const ServiceName = "local"

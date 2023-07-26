@@ -17,14 +17,14 @@ import (
 )
 
 type Config struct {
-	Region          string `env:"REGION"`
-	BucketName      string `env:"BUCKET_NAME"`
-	BasePath        string `env:"BASE_PATH"`
-	AccessKeyID     string `env:"ACCESS_KEY_ID,required"`
-	SecretAccessKey string `env:"SECRET_ACCESS_KEY,required"`
-	Endpoint        string `env:"ENDPOINT,required"`
-	UseSSL          bool   `env:"USE_SSL"`
-	BucketOperation bool   `env:"BUCKET_OPERATION"`
+	Region          string `env:"REGION" yaml:"region" json:"region"`
+	BucketName      string `env:"BUCKET_NAME" yaml:"bucket_name" json:"bucket_name"`
+	BasePath        string `env:"BASE_PATH" yaml:"base_path" json:"base_path"`
+	AccessKeyID     string `env:"ACCESS_KEY_ID,required" yaml:"access_key_id" json:"access_key_id"`
+	SecretAccessKey string `env:"SECRET_ACCESS_KEY,required" yaml:"secret_access_key" json:"secret_access_key"`
+	Endpoint        string `env:"ENDPOINT,required" yaml:"endpoint" json:"endpoint"`
+	UseSSL          bool   `env:"USE_SSL" yaml:"use_ssl" json:"use_ssl"`
+	BucketOperation bool   `env:"BUCKET_OPERATION" yaml:"bucket_operation" json:"bucket_operation"`
 }
 
 const ServiceName = "minio"

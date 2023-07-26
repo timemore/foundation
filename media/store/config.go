@@ -5,8 +5,8 @@ import (
 )
 
 type Config struct {
-	NameGenerationKey string `env:"FILENAME_GENERATION_KEY"`
-	StoreService      string `env:"STORE_SERVICE"`
+	NameGenerationKey string `env:"FILENAME_GENERATION_KEY" yaml:"filename_generation_key" json:"filename_generation_key"`
+	StoreService      string `env:"STORE_SERVICE" yaml:"store_service" json:"store_service"`
 
 	Modules map[string]any `env:",map,squash"`
 

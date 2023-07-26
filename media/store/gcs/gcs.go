@@ -18,11 +18,11 @@ import (
 )
 
 type Config struct {
-	BucketName      string `env:"BUCKET_NAME"`
-	ProjectID       string `env:"PROJECT_ID"`
-	CredentialFile  string `env:"CREDENTIAL_FILE"`
-	Basepath        string `env:"BASEPATH"`
-	BucketOperation bool   `env:"BUCKET_OPERATION"`
+	BucketName      string `env:"BUCKET_NAME" yaml:"bucket_name" json:"bucket_name"`
+	ProjectID       string `env:"PROJECT_ID" yaml:"project_id" json:"project_id"`
+	CredentialFile  string `env:"CREDENTIAL_FILE" yaml:"credential_file" json:"credential_file"`
+	Basepath        string `env:"BASEPATH" yaml:"basepath" json:"basepath"`
+	BucketOperation bool   `env:"BUCKET_OPERATION" yaml:"bucket_operation" json:"bucket_operation"`
 }
 
 const ServiceName = "gcs"

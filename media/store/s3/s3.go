@@ -15,10 +15,10 @@ import (
 )
 
 type Config struct {
-	Region          string `env:"REGION,required"`
-	BucketName      string `env:"BUCKET_NAME,required"`
-	AccessKeyID     string `env:"ACCESS_KEY_ID"`
-	SecretAccessKey string `env:"SECRET_ACCESS_KEY"`
+	Region          string `env:"REGION,required" yaml:"region" json:"region"`
+	BucketName      string `env:"BUCKET_NAME,required" yaml:"bucket_name" json:"bucket_name"`
+	AccessKeyID     string `env:"ACCESS_KEY_ID" yaml:"access_key_id" json:"access_key_id"`
+	SecretAccessKey string `env:"SECRET_ACCESS_KEY" yaml:"secret_access_key" json:"secret_access_key"`
 }
 
 const ServiceName = "s3"
