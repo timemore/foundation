@@ -81,12 +81,19 @@ func ModuleConfigSkeletons() map[string]any {
 func UnmarshalModuleConfigFromYaml(conf any) map[string]any {
 	modulesMu.RLock()
 	defer modulesMu.RUnlock()
-	b, _ := yaml.Marshal(conf)
 	configs := map[string]any{}
+	modsConf, ok := conf.(map[string]any)
+	if !ok {
+		return configs
+	}
 	for serviceName, mod := range modules {
-		if mod.ServiceConfigSkeleton != nil {
-			modCfg := mod.ServiceConfigSkeleton()
-			yaml.Unmarshal(b, &modCfg)
+		_, ok := modsConf[serviceName]
+		if !ok {
+			continue
+		}
+		if modCfg := mod.ServiceConfigSkeleton; modCfg != nil {
+			b, _ := yaml.Marshal(modsConf[serviceName])
+			_ = yaml.Unmarshal(b, &modCfg)
 			configs[serviceName] = modCfg
 		}
 	}
