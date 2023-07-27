@@ -12,6 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go/service/s3/s3manager"
 	"github.com/timemore/foundation/errors"
 	mediastore "github.com/timemore/foundation/media/store"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -44,6 +45,12 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 
 	conf, ok := config.(*Config)
 	if !ok {
+		// try another tags yaml, json
+		b, _ := yaml.Marshal(config)
+		var cfg Config
+		if err := yaml.Unmarshal(b, &cfg); err == nil {
+			conf = &cfg
+		}
 		return nil, errors.ArgMsg("config", "type invalid")
 	}
 	if conf == nil || conf.Region == "" || conf.BucketName == "" {

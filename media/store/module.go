@@ -34,6 +34,12 @@ func ModuleNames() []string {
 	return names
 }
 
+func AvailableModules() map[string]Module {
+	modulesMu.Lock()
+	defer modulesMu.Unlock()
+	return modules
+}
+
 func NewServiceClient(
 	serviceName string,
 	config any,
