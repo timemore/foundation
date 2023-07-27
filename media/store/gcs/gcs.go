@@ -56,10 +56,11 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 	if !ok {
 		b, _ := yaml.Marshal(config)
 		var cfg Config
-		if err := yaml.Unmarshal(b, &cfg); err == nil {
-			conf = &cfg
+		err := yaml.Unmarshal(b, &cfg)
+		if err != nil {
+			return nil, errors.ArgMsg("config", "type invalid")
 		}
-		return nil, errors.ArgMsg("config", "type invalid")
+		conf = &cfg
 	}
 
 	isExists, err := conf.IsAvailableCredentials()
