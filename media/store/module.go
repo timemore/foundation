@@ -91,7 +91,8 @@ func UnmarshalModuleConfigFromYaml(conf any) map[string]any {
 		if !ok {
 			continue
 		}
-		if modCfg := mod.ServiceConfigSkeleton; modCfg != nil {
+		if mod.ServiceConfigSkeleton != nil {
+			modCfg := mod.ServiceConfigSkeleton()
 			b, _ := yaml.Marshal(modsConf[serviceName])
 			_ = yaml.Unmarshal(b, &modCfg)
 			configs[serviceName] = modCfg
