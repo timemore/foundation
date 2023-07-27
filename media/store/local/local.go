@@ -8,6 +8,7 @@ import (
 
 	"github.com/timemore/foundation/errors"
 	mediastore "github.com/timemore/foundation/media/store"
+	"gopkg.in/yaml.v3"
 )
 
 type Config struct {
@@ -35,6 +36,11 @@ func NewService(config mediastore.ServiceConfig) (mediastore.Service, error) {
 
 	conf, ok := config.(*Config)
 	if !ok {
+		b, _ := yaml.Marshal(config)
+		var cfg Config
+		if err := yaml.Unmarshal(b, &cfg); err == nil {
+			conf = &cfg
+		}
 		return nil, errors.ArgMsg("config", "type invalid")
 	}
 
