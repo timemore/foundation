@@ -2,6 +2,8 @@ package store
 
 import (
 	"sync"
+
+	"gopkg.in/yaml.v3"
 )
 
 // Module contains attributes which describe a storage module.
@@ -70,6 +72,22 @@ func ModuleConfigSkeletons() map[string]any {
 	for serviceName, mod := range modules {
 		if mod.ServiceConfigSkeleton != nil {
 			configs[serviceName] = mod.ServiceConfigSkeleton()
+		}
+	}
+
+	return configs
+}
+
+func UnmarshalModuleConfigFromYaml(conf any) map[string]any {
+	modulesMu.RLock()
+	defer modulesMu.RUnlock()
+	b, _ := yaml.Marshal(conf)
+	configs := map[string]any{}
+	for serviceName, mod := range modules {
+		if mod.ServiceConfigSkeleton != nil {
+			modCfg := mod.ServiceConfigSkeleton()
+			yaml.Unmarshal(b, &modCfg)
+			configs[serviceName] = modCfg
 		}
 	}
 
