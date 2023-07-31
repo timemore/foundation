@@ -1,11 +1,18 @@
 package media
 
 import (
+	"bytes"
+	"fmt"
+	"image"
+	"image/gif"
+	"image/jpeg"
+	"image/png"
 	"io"
 	"strings"
 	"sync/atomic"
 
 	"github.com/gabriel-vasile/mimetype"
+	"github.com/nfnt/resize"
 )
 
 var mimeReadLimit uint32 = 0
@@ -84,4 +91,37 @@ func GetMediaTypeInfoByTypeName(mediaTypeName string) MediaTypeInfo {
 
 func GetMediaTypeInfo(mediaType MediaType) MediaTypeInfo {
 	return mediaTypeRegistry[mediaType]
+}
+
+func ResizeImage(file io.Reader, contentType string, width, height uint) ([]byte, error) {
+	var resizedImg image.Image
+	buf := new(bytes.Buffer)
+	switch contentType {
+	case "image/png":
+		imgSignature, err := png.Decode(file)
+		if err != nil {
+			return nil, err
+		}
+		resizedImg = resize.Resize(uint(width), uint(height), imgSignature, resize.Lanczos3)
+		(&png.Encoder{CompressionLevel: png.NoCompression}).Encode(buf, resizedImg)
+	case "image/jpg", "image/jpeg":
+		imgSignature, err := jpeg.Decode(file)
+		if err != nil {
+			return nil, err
+		}
+		resizedImg = resize.Resize(uint(width), uint(height), imgSignature, resize.Lanczos3)
+		jpeg.Encode(buf, resizedImg, nil)
+	case "image/gif":
+		imgSignature, err := gif.Decode(file)
+		if err != nil {
+			return nil, err
+		}
+		resizedImg = resize.Resize(uint(width), uint(height), imgSignature, resize.Lanczos3)
+		gif.Encode(buf, resizedImg, nil)
+	default:
+		// without resizing
+		return nil, fmt.Errorf("file is not an image or corrupted")
+	}
+
+	return buf.Bytes(), nil
 }
