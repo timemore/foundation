@@ -109,7 +109,7 @@ type Service struct {
 	minioClient *minio.Client
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo any, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo *mediastore.UploadInfo, err error) {
 	bucketName := s.bucketName
 	if s.basePath != "" {
 		targetKey = path.Join(s.basePath, targetKey)
@@ -133,7 +133,12 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 		return nil, errors.Wrap("upload", err)
 	}
 
-	return info, nil
+	return &mediastore.UploadInfo{
+		Bucket:       bucketName,
+		Key:          info.Key,
+		ETag:         info.ETag,
+		LastModified: info.LastModified,
+	}, nil
 }
 
 func (s *Service) GetPublicObject(sourceKey string) (targetURl string, err error) {

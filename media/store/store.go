@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"io"
 	"strconv"
+	"time"
 
 	"github.com/timemore/foundation/errors"
 	"github.com/timemore/foundation/media"
@@ -45,10 +46,18 @@ func New(config Config) (*Store, error) {
 	}, nil
 }
 
-func (mediaStore *Store) Upload(mediaName string, contentSource io.Reader, mediaType media.MediaType) (uploadInfo any, err error) {
+func (mediaStore *Store) Upload(
+	mediaName string,
+	contentSource io.Reader,
+	mediaType media.MediaType,
+) (uploadInfo *UploadInfo, err error) {
 	uploadInfo, err = mediaStore.serviceClient.PutObject(mediaName, contentSource)
 	if err != nil {
-		return "", errors.Wrap("putting object", err)
+		return nil, errors.Wrap("putting object", err)
+	}
+	tNow := time.Now().UTC()
+	if uploadInfo.LastModified.IsZero() {
+		uploadInfo.LastModified = tNow
 	}
 
 	return uploadInfo, nil
@@ -108,4 +117,13 @@ func ContentTypeInList(contentType string, contentTypeList []string) bool {
 		}
 	}
 	return false
+}
+
+type UploadInfo struct {
+	Bucket       string
+	Key          string
+	LastModified time.Time
+	Location     string
+	UploadID     string
+	ETag         string
 }

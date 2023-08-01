@@ -126,7 +126,7 @@ type UploadInfo struct {
 	Key    string
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo any, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo *mediastore.UploadInfo, err error) {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*50)
 	defer cancel()
 	if s.basePath != "" {
@@ -144,7 +144,7 @@ func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadIn
 		return nil, errors.Wrap("writer.Close", err)
 	}
 
-	return UploadInfo{
+	return &mediastore.UploadInfo{
 		Bucket: s.bucketName,
 		Key:    targetKey,
 	}, nil

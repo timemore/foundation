@@ -93,16 +93,22 @@ type Service struct {
 	downloader *s3manager.Downloader
 }
 
-func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo any, err error) {
+func (s *Service) PutObject(targetKey string, contentSource io.Reader) (uploadInfo *mediastore.UploadInfo, err error) {
 	result, err := s.uploader.Upload(&s3manager.UploadInput{
 		Body:   contentSource,
 		Bucket: aws.String(s.bucketName),
 		Key:    aws.String(targetKey),
 	})
 	if err != nil {
-		return "", errors.Wrap("upload", err)
+		return nil, errors.Wrap("upload", err)
 	}
-	return result, nil
+
+	return &mediastore.UploadInfo{
+		Bucket:   *aws.String(s.bucketName),
+		Key:      *aws.String(targetKey),
+		UploadID: result.UploadID,
+		Location: result.Location,
+	}, nil
 }
 
 func (s *Service) GetPublicObject(sourceKey string) (targetURL string, err error) {
