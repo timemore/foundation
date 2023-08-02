@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"io"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/timemore/foundation/errors"
@@ -31,9 +32,10 @@ func New(config Config) (*Store, error) {
 		return nil, errors.ArgMsg("config.StoreService", "empty")
 	}
 
+	modsAvailable := ModuleNames()
 	modCfg := config.Modules[config.StoreService]
 	if modCfg == nil {
-		return nil, errors.ArgMsg("config.StoreService", config.StoreService+" not configured")
+		return nil, errors.ArgMsg("config.StoreService", config.StoreService+" not configured, availbale StoreService name : "+strings.Join(modsAvailable, ","))
 	}
 	serviceClient, err := NewServiceClient(config.StoreService, modCfg)
 	if err != nil {
@@ -121,9 +123,11 @@ func ContentTypeInList(contentType string, contentTypeList []string) bool {
 
 type UploadInfo struct {
 	Bucket       string
+	ETag         string
 	Key          string
 	LastModified time.Time
 	Location     string
+	Output       *bytes.Buffer
+	Size         int
 	UploadID     string
-	ETag         string
 }

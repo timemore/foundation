@@ -54,12 +54,12 @@ type Service struct {
 	directoryPath string
 }
 
-func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadInfo any, err error) {
+func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadInfo *mediastore.UploadInfo, err error) {
 	if s.directoryPath != "" {
 		targetName := filepath.Join(s.directoryPath, objectKey)
 		targetFile, err := os.Create(targetName)
 		if err != nil {
-			return "", errors.Wrap("create file", err)
+			return nil, errors.Wrap("create file", err)
 		}
 		defer func() {
 			_ = targetFile.Close()
@@ -67,7 +67,7 @@ func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadIn
 
 		_, err = io.Copy(targetFile, contentSource)
 		if err != nil {
-			return "", errors.Wrap("write content", err)
+			return nil, errors.Wrap("write content", err)
 		}
 	}
 	stream := &bytes.Buffer{}
@@ -86,11 +86,11 @@ func (s *Service) PutObject(objectKey string, contentSource io.Reader) (uploadIn
 		}
 	}
 
-	return UploadOutput{
-		Directory: s.directoryPath,
-		Key:       objectKey,
-		Output:    stream,
-		Size:      dataSize,
+	return &mediastore.UploadInfo{
+		Bucket: s.directoryPath,
+		Key:    objectKey,
+		Output: stream,
+		Size:   dataSize,
 	}, nil
 }
 
